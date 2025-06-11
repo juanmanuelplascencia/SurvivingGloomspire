@@ -1,0 +1,158 @@
+# Unreal Engine 5 Generated Files
+# ==============================
+
+# Binaries directory
+Binaries/
+
+# Build directory
+Build/
+
+# Intermediate directory
+Intermediate/
+
+# .vs directory
+.vs/
+
+# Visual Studio user files
+*.suo
+*.sln
+*.VC.db
+*.VC.VC.opendb
+*.VC.VC.db
+*.VC.VC.db-shm
+*.VC.VC.db-wal
+
+# Visual Studio Code directory
+.vscode/
+
+# Project files
+*.sln
+*.sln.*
+*.xcodeproj
+*.xcodeproj/*
+!*.xcodeproj/project.pbxproj
+!*.xcodeproj/xcshareddata/
+!*.xcworkspace/contents.xcworkspacedata
+
+# Compiled Object files
+*.o
+*.o.*
+*.obj
+
+# Precompiled Headers
+*.pch
+*.pdb
+*.moc
+*.opendb
+*.VC.db
+*.VC.VC.opendb
+
+# Compiled Dynamic libraries
+*.so
+*.dylib
+*.dll
+
+# Static libraries
+*.lib
+*.a
+*.la
+
+# Executables
+*.exe
+*.out
+*.app
+
+# Debug files
+*.dSYM/
+*.pdb
+
+# Project specific files
+Saved/
+DerivedDataCache/
+Intermediate/
+Binaries/
+Build/
+*.sln
+*.xcodeproj
+*.xcworkspace
+*.code-workspace
+
+# Visual Studio user files
+.vs/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+*.opensdf
+*.sdf
+*.VC.db
+*.VC.VC.opendb
+
+# Visual Studio Code user settings
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Unreal Engine specific
+*.uasset
+*.umap
+*.ubulk
+*.uexp
+*.uasset
+*.uexp
+*.ubulk
+*.uasset
+*.uexp
+*.ubulk
+*.uasset
+*.uexp
+*.ubulk
+*.uasset
+*.uexp
+*.ubulk
+*.uproject
+
+# Logs
+*.log
+
+# Local development environment files
+.env
+*.local
+
+# JetBrains IDEs
+.idea/
+*.iml
+
+# Visual Studio cache/options directory
+.vs/
+
+# Windows thumbnail cache files
+Thumbs.db
+
+# Folder config file
+[Dd]esktop.ini
+
+# Recycle Bin used on file shares
+$RECYCLE.BIN/
+
+# Windows Installer files
+*.cab
+*.msi
+*.msm
+*.msp
+
+# Windows shortcuts
+*.lnk
+
+# End of https://www.toptal.com/developers/gitignore/api/unrealengine,visualstudio,visualstudiocode,windows
