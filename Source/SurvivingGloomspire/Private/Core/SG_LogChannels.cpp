@@ -1,0 +1,22 @@
+// Copyright 2025 Surviving Gloomspire Team. All Rights Reserved.
+
+#include "Core/SG_LogChannels.h"
+
+// Define log categories
+DEFINE_LOG_CATEGORY(LogSurvivingGloomspire);
+DEFINE_LOG_CATEGORY(LogSG_Game);
+DEFINE_LOG_CATEGORY(LogSG_Gameplay);
+DEFINE_LOG_CATEGORY(LogSG_AI);
+DEFINE_LOG_CATEGORY(LogSG_UI);
+DEFINE_LOG_CATEGORY(LogSG_Inventory);
+DEFINE_LOG_CATEGORY(LogSG_AbilitySystem);
+DEFINE_LOG_CATEGORY(LogSG_EffectSystem);
+DEFINE_LOG_CATEGORY(LogSG_EventSystem);
+DEFINE_LOG_CATEGORY(LogSG_ConfigSystem);
+DEFINE_LOG_CATEGORY(LogSG_Loading);
+DEFINE_LOG_CATEGORY(LogSG_Net);
+DEFINE_LOG_CATEGORY(LogSG_Physics);
+DEFINE_LOG_CATEGORY(LogSG_Audio);
+DEFINE_LOG_CATEGORY(LogSG_Animation);
+DEFINE_LOG_CATEGORY(LogSG_Input);
+DEFINE_LOG_CATEGORY(LogSG_SaveGame);

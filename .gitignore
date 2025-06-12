@@ -105,23 +105,67 @@ ehthumbs.db
 Thumbs.db
 
 # Unreal Engine specific
+# Don't ignore .uproject file
+!.uproject
+
+# Source asset files - these should be version controlled
+# Content/ and Plugins/ are handled by the patterns below
+
+# Binary files - these should not be version controlled
 *.uasset
 *.umap
 *.ubulk
 *.uexp
-*.uasset
-*.uexp
-*.ubulk
-*.uasset
-*.uexp
-*.ubulk
-*.uasset
-*.uexp
-*.ubulk
-*.uasset
-*.uexp
-*.ubulk
-*.uproject
+*.upipelinecache
+*.mdd
+*.dll
+*.exe
+*.dylib
+*.so
+*.app
+*.lib
+*.a
+*.dll.a
+*.dll.lib
+
+# Don't ignore config files in the root Config/ directory
+!Config/*
+!Config/Windows/
+!Config/Windows/*.ini
+!Config/Mac/
+!Config/Mac/*.ini
+!Config/Linux/
+!Config/Linux/*.ini
+
+# Don't ignore source files
+!Source/**/*
+
+# Don't ignore .uplugin files
+!*.uplugin
+
+# Don't ignore .shader files
+!*.shader
+
+# Don't ignore .target.cs files
+!*.target.cs
+
+# Don't ignore .Build.cs files
+!*.Build.cs
+
+# Don't ignore .cs files
+!*.cs
+
+# Don't ignore .h files
+!*.h
+
+# Don't ignore .cpp files
+!*.cpp
+
+# Don't ignore .inl files
+!*.inl
+
+# Don't ignore .generated.h files
+!*.generated.h
 
 # Logs
 *.log
