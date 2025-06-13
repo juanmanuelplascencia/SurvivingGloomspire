@@ -5,7 +5,7 @@ using System.IO;
 
 public class SurvivingGloomspire : ModuleRules
 {
-    public SurvivingGloomspire(ReadOnlyTargetRules Target) : base(Target)
+    public SurvivingGloomspire(ReadOnlyTargetRules target) : base(target)
     {
         // Basic module settings
         PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
@@ -17,9 +17,8 @@ public class SurvivingGloomspire : ModuleRules
         
         // Public dependencies (modules that expose their header files to us)
         PublicDependencyModuleNames.AddRange(
-            new string[]
-            {
-                "Core",
+        [
+            "Core",
                 "CoreUObject",
                 "Engine",
                 "InputCore",
@@ -28,13 +27,13 @@ public class SurvivingGloomspire : ModuleRules
                 "GameplayTags",
                 "GameplayTasks",
                 "ModularGameplay",
-            });
+                "DeveloperSettings"
+        ]);
 
         // Private dependencies (modules that we use internally)
         PrivateDependencyModuleNames.AddRange(
-            new string[]
-            {
-                // Core modules
+        [
+            // Core modules
                 "Slate",
                 "SlateCore",
                 "UMG",
@@ -49,8 +48,8 @@ public class SurvivingGloomspire : ModuleRules
                 "HTTP",
                 "WebSockets",
                 "Networking",
-                "Sockets",
-            });
+                "Sockets"
+        ]);
 
         // Uncomment if you are using online features
         // PrivateDependencyModuleNames.Add("OnlineSubsystem");
@@ -91,5 +90,18 @@ public class SurvivingGloomspire : ModuleRules
         // Add include paths for module subdirectories
         PublicIncludePaths.Add(Path.Combine(ModuleDirectory, "Public/Core"));
         PublicIncludePaths.Add(Path.Combine(ModuleDirectory, "Public/Game"));
+        
+        // Add private include paths
+        PrivateIncludePaths.Add(Path.Combine(ModuleDirectory, "Private/Core"));
+        
+        // Add source files for the logging system
+        PrivateIncludePathModuleNames.AddRange(
+            [
+                "Settings"
+            ]
+        );
+        
+        // Add preprocessor definitions for the logging system
+        PublicDefinitions.Add("WITH_LOGGING_SYSTEM=1");
     }
 }
