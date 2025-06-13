@@ -19,15 +19,20 @@ public class SurvivingGloomspire : ModuleRules
         PublicDependencyModuleNames.AddRange(
         [
             "Core",
-                "CoreUObject",
-                "Engine",
-                "InputCore",
-                "EnhancedInput",
-                "GameplayAbilities",
-                "GameplayTags",
-                "GameplayTasks",
-                "ModularGameplay",
-                "DeveloperSettings"
+            "CoreUObject",
+            "Engine",
+            "InputCore",
+            "ApplicationCore",
+            "Projects",
+            "Slate",
+            "SlateCore",
+            "UMG",
+            "EnhancedInput",
+            "GameplayAbilities",
+            "GameplayTags",
+            "GameplayTasks",
+            "ModularGameplay",
+            "DeveloperSettings"
         ]);
 
         // Private dependencies (modules that we use internally)

@@ -40,16 +40,16 @@
   - [x] Verbosity-based filtering
   - [x] Category-based filtering
   - [x] Global and per-category overrides
-- [ ] Crash reporting integration
-  - [ ] Crash dump analysis hooks
-  - [ ] Post-crash logging
-  - [ ] Crash report formatting
+- [x] Crash reporting integration
+  - [x] Crash dump analysis hooks
+  - [x] Post-crash logging
+  - [x] Crash report formatting
 - [x] Documentation
   - [x] Architecture documentation
   - [x] Usage guide with examples
   - [x] API reference
   - [x] Best practices guide
-  - [ ] Crash reporting integration docs
+  - [x] Crash reporting integration docs
 - [ ] Testing
   - [ ] Unit tests for core functionality
   - [ ] Integration tests
