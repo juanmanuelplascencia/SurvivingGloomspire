@@ -12,8 +12,6 @@ public class SurvivingGloomspire : ModuleRules
         IWYUSupport = IWYUSupport.Full;  // Enforce Include What You Use
         bLegacyPublicIncludePaths = false; // Use explicit public include paths
         
-        // Public include paths
-        PublicIncludePaths.Add(Path.Combine(ModuleDirectory, "Public"));
         
         // Public dependencies (modules that expose their header files to us)
         PublicDependencyModuleNames.AddRange(
@@ -30,12 +28,7 @@ public class SurvivingGloomspire : ModuleRules
             "EnhancedInput",
             "GameplayAbilities",
             "GameplayTags",
-            "GameplayTasks",
-            "ModularGameplay",
-            "DeveloperSettings",
-            "RenderCore",
-            "RHI",
-            "HTTP"
+            "GameplayTasks"
         ]);
 
         // Private dependencies (modules that we use internally)
@@ -103,7 +96,6 @@ public class SurvivingGloomspire : ModuleRules
         
         // Add include paths for module subdirectories
         
-        // Add private include paths
         
         // Add source files for the logging system
         PrivateIncludePathModuleNames.AddRange(
