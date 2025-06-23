@@ -4,7 +4,6 @@
 
 #include "CoreMinimal.h"
 #include "Modules/ModuleManager.h"
-#include "Core/SG_LogChannels.h"
 
 /**
  * The main module class for the Surviving Gloomspire game module
@@ -18,7 +17,7 @@ public:
     
     /**
      * Singleton-like access to this module's interface.
-     * @return Returns singleton instance, loading the module on demand if needed
+     * @return Returns a singleton instance, loading the module on demand if needed
      */
     static inline FSurvivingGloomspireModule& Get()
     {

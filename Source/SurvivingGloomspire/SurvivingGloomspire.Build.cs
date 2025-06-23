@@ -32,28 +32,37 @@ public class SurvivingGloomspire : ModuleRules
             "GameplayTags",
             "GameplayTasks",
             "ModularGameplay",
-            "DeveloperSettings"
+            "DeveloperSettings",
+            "RenderCore",
+            "RHI",
+            "HTTP"
         ]);
 
         // Private dependencies (modules that we use internally)
         PrivateDependencyModuleNames.AddRange(
         [
             // Core modules
-                "Slate",
-                "SlateCore",
-                "UMG",
-                "AIModule",
-                "NavigationSystem",
-                "GameplayAbilities",
-                "GameplayTags",
-                "GameplayTasks",
-                "ModularGameplay",
-                "Json",
-                "JsonUtilities",
-                "HTTP",
-                "WebSockets",
-                "Networking",
-                "Sockets"
+            "Slate",
+            "SlateCore",
+            "UMG",
+            "AIModule",
+            "NavigationSystem",
+            "GameplayAbilities",
+            "GameplayTags",
+            "GameplayTasks",
+            "ModularGameplay",
+            "CoreUObject",
+            "Engine",
+            "InputCore",
+            "ApplicationCore",
+            "Projects",
+            "DeveloperSettings",
+            "Json",
+            "JsonUtilities",
+            "HTTP",
+            "WebSockets",
+            "Networking",
+            "Sockets"
         ]);
 
         // Uncomment if you are using online features
@@ -93,11 +102,8 @@ public class SurvivingGloomspire : ModuleRules
         #endif
         
         // Add include paths for module subdirectories
-        PublicIncludePaths.Add(Path.Combine(ModuleDirectory, "Public/Core"));
-        PublicIncludePaths.Add(Path.Combine(ModuleDirectory, "Public/Game"));
         
         // Add private include paths
-        PrivateIncludePaths.Add(Path.Combine(ModuleDirectory, "Private/Core"));
         
         // Add source files for the logging system
         PrivateIncludePathModuleNames.AddRange(
