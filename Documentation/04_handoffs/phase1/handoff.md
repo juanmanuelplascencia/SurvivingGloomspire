@@ -78,11 +78,11 @@
 ### Core Team
 | Role | Name | Contact |
 |------|------|---------|
-| Project Lead | [Name] | [Email] |
-| Technical Director | [Name] | [Email] |
-| Art Director | [Name] | [Email] |
-| Lead Developer | [Name] | [Email] |
-| QA Lead | [Name] | [Email] |
+| Project Lead | Juan Manuel Plascencia | juan@example.com |
+| Technical Director | [To be hired] | tbd@example.com |
+| Art Director | [To be hired] | tbd@example.com |
+| Lead Developer | [To be hired] | tbd@example.com |
+| QA Lead | [To be hired] | tbd@example.com |
 
 ### Responsibilities
 - **Development**: [Team Members]
@@ -95,8 +95,9 @@
 ### Technical Debt
 | ID | Description | Impact | Planned Resolution |
 |----|-------------|--------|-------------------|
-| TD-001 | [Issue] | Medium | Phase 2, Sprint 1 |
-| TD-002 | [Issue] | Low | Phase 2, Sprint 2 |
+| TD-001 | CI/CD pipeline setup incomplete | High | Phase 2, Sprint 1 |
+| TD-002 | Test coverage below target | Medium | Phase 2, Sprint 1 |
+| TD-003 | Team positions to be filled | High | Phase 2, Sprint 1 |
 
 ### Open Questions
 1. [Question 1]
