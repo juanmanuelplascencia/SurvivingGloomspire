@@ -26,23 +26,28 @@ This document outlines the pre-production phase of the Pathfinder 1e implementat
   - [x] Modeling Tools
 - [x] Set up development environment
 
-### 2. Technical Design (Week 3-4)
-- [ ] Design core architecture
-  - [ ] Component-based architecture
-  - [ ] Game state management
-  - [ ] Save/load system
-- [ ] Plan data structures
-  - [ ] Character attributes
-  - [ ] Inventory system
-  - [ ] Quest system
-- [ ] Design UI/UX flow
-  - [ ] HUD layout
-  - [ ] Menu navigation
-  - [ ] Character creation
-- [ ] Document technical design
-  - [ ] System architecture diagrams
-  - [ ] Class relationships
-  - [ ] Data flow
+### 2. Technical Design (Week 3-4) - In Progress
+- [x] Design core architecture
+  - [x] Component-based architecture
+  - [x] Game state management
+  - [x] Save/load system
+- [x] Plan data structures
+  - [x] Character attributes
+  - [x] Inventory system
+  - [x] Quest system
+- [x] Design UI/UX flow
+  - [x] HUD layout
+  - [x] Menu navigation
+  - [x] Character creation
+  - [x] Inventory system
+  - [x] Dialogue system
+  - [x] Journal/Quest log
+- [x] Document technical design
+  - [x] System architecture diagrams
+  - [x] Class relationships
+  - [x] Data flow
+  - [x] Network architecture
+  - [x] Replication strategy
 
 ### 3. Asset Pipeline (Week 5-6)
 - [ ] Set up asset import/export pipeline
