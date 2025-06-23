@@ -2,40 +2,84 @@
 
 ## Table of Contents
 
-### Core Documentation
-- [Executive Summary](01_executive_summary.md)
+### Surviving Gloomspire Documentation
 
-### Core Mechanics
-- [Attributes](02_core_mechanics/attributes.md)
-- [Combat Mechanics](02_core_mechanics/combat_mechanics.md)
-- [Skills System](02_core_mechanics/skills.md)
-- [Spellcasting System](02_core_mechanics/spellcasting.md)
-- [Character Progression](02_core_mechanics/character_progression.md)
+## Table of Contents
 
-### System Architecture
-- [Modular Design Principles](03_architecture/modular_design.md)
-- [Component-Based Architecture](03_architecture/component_system.md)
-- [Data Structures](03_architecture/data_structures.md)
+### 1. Project Overview
+- [Executive Summary](01_project_overview/01_executive_summary.md)
+- [Project Vision](01_project_overview/02_vision.md)
+- [Technical Overview](01_project_overview/03_technical_overview.md)
 
-### Unreal Engine 5 Implementation
-- [2D Setup with Paper2D](04_unreal_implementation/paper2d_setup.md)
-- [Gameplay Ability System](04_unreal_implementation/gameplay_ability_system.md)
-- [Data Management](04_unreal_implementation/data_management.md)
+### 2. Development
+- **Roadmap**
+  - [Phase 1: Pre-production](02_development/01_roadmap/phase1_preproduction.md)
+  - [Phase 2: Core Systems](02_development/01_roadmap/phase2_core_systems.md)
+  - [Phase 3: Combat](02_development/01_roadmap/phase3_combat.md)
+  - [Phase 4: Content](02_development/01_roadmap/phase4_content_creation.md)
+  - [Phase 5: Polish](02_development/01_roadmap/phase5_polish_optimization.md)
+  
+- **Architecture**
+  - [System Design](02_development/02_architecture/)
+  - [Data Management](02_development/02_architecture/data_management.md)
+  
+- **Core Mechanics**
+  - [Attributes](02_development/03_core_mechanics/attributes.md)
+  - [Combat System](02_development/03_core_mechanics/combat_mechanics.md)
+  - [Skills](02_development/03_core_mechanics/skills.md)
+  - [Character Progression](02_development/03_core_mechanics/character_progression.md)
+  
+- **UI/UX**
+  - [UI Flow](02_development/04_ui_ux/ui_flow.md)
+  - [Design System](02_development/04_ui_ux/design_system.md)
+  
+- **Asset Pipeline**
+  - [Art Guidelines](02_development/05_asset_pipeline/art_guidelines.md)
+  - [Audio Guidelines](02_development/05_asset_pipeline/audio_guidelines.md)
+  - [Import Settings](02_development/05_asset_pipeline/import_settings.md)
 
-### Development Roadmap
-- [Phase 0: Project Setup & Foundation](05_development_roadmap/phase0_setup.md)
-- [Phase 1: Pre-production](05_development_roadmap/phase1_preproduction.md)
-- [Phase 2: Core Systems](05_development_roadmap/phase2_core_systems.md)
-- [Phase 3: Combat Implementation](05_development_roadmap/phase3_combat.md)
-- [Phase 4: Content Creation](05_development_roadmap/phase4_content_creation.md)
-- [Phase 5: Polish & Optimization](05_development_roadmap/phase5_polish_optimization.md)
+### 3. Operations
+- **Quality Assurance**
+  - [Testing Strategy](03_operations/01_quality_assurance/testing_strategy.md)
+  - [Bug Reporting](03_operations/01_quality_assurance/bug_reporting.md)
+  - [Code Review](03_operations/01_quality_assurance/code_review_process.md)
+  
+- **Risk Management**
+  - [Risk Register](03_operations/02_risk_management/risk_register.md)
+  - [Risk Assessment](03_operations/02_risk_management/risk_assessment_template.md)
+  
+- **Performance Metrics**
+  - [KPIs](03_operations/03_performance_metrics/kpis.md)
+  - [Retrospectives](03_operations/03_performance_metrics/retrospective_template.md)
 
-### Appendix
-- [Project Setup Guide](06_appendix/project_setup_guide.md)
-- [Content Guidelines](06_appendix/content_guidelines.md)
-- [Performance Guidelines](06_appendix/performance_guidelines.md)
-- [Release Checklist](06_appendix/release_checklist.md)
-- [UI Style Guide](06_appendix/ui_style_guide.md)
+### 4. Handoffs
+- **Phase 1**
+  - [Handoff Document](04_handoffs/phase1/handoff.md)
+  - [Checklist](04_handoffs/phase1/checklist.md)
+  - [Retrospective](04_handoffs/phase1/retrospective.md)
+  
+- **Templates**
+  - [Handoff Template](04_handoffs/templates/handoff_template.md)
+  - [Checklist Template](04_handoffs/templates/checklist_template.md)
+
+### 5. References
+- **Style Guides**
+  - [Documentation Style Guide](05_references/01_style_guides/documentation_style.md)
+  - [Code Style Guide](05_references/01_style_guides/code_style.md)
+  - [UI Style Guide](05_references/01_style_guides/ui_style_guide.md)
+  
+- [Glossary](05_references/glossary.md)
+- [FAQs](05_references/faq.md)
+- [Changelog](05_references/changelog.md)
+
+## Getting Started
+New to the project? Start with the [Executive Summary](01_project_overview/01_executive_summary.md) for a high-level overview.
+
+## Contributing
+When updating documentation:
+1. Follow the [Documentation Style Guide](05_references/01_style_guides/documentation_style.md)
+2. Update the version number and last updated date
+3. Add to the [Changelog](05_references/changelog.md) if applicable
 
 ---
-*Documentation last updated: 2023-11-15*
+*Last Updated: 2025-06-23*
