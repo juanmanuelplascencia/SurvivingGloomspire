@@ -1,0 +1,229 @@
+# Phase 2: Core Systems Development
+
+## Overview
+This document outlines the development of the core game systems for the Pathfinder 1e implementation, including character systems, combat, and basic gameplay mechanics.
+
+## Goals
+1. Implement character creation and progression
+2. Develop core combat system
+3. Create inventory and equipment system
+4. Implement basic AI
+
+## Milestones
+
+### 1. Character System (Weeks 1-3)
+- [ ] Implement attribute system
+- [ ] Create character classes
+- [ ] Develop skill system
+- [ ] Implement level progression
+
+### 2. Combat System (Weeks 4-6)
+- [ ] Design combat flow
+- [ ] Implement turn-based mechanics
+- [ ] Create action system
+- [ ] Develop damage and healing
+
+### 3. Inventory & Equipment (Weeks 7-8)
+- [ ] Design inventory UI
+- [ ] Implement item system
+- [ ] Create equipment system
+- [ ] Develop item interactions
+
+## Detailed Tasks
+
+### Character System
+1. **Attributes**
+   - Implement core attributes (STR, DEX, CON, INT, WIS, CHA)
+   - Create derived attributes (HP, AC, Saves)
+   - Implement attribute modifiers
+   - Design attribute UI
+
+2. **Classes & Levels**
+   - Implement class system
+   - Create level progression
+   - Develop experience system
+   - Design class features
+
+3. **Skills**
+   - Implement skill system
+   - Create skill checks
+   - Design skill progression
+   - Implement skill synergy
+
+### Combat System
+1. **Turn Management**
+   - Implement initiative system
+   - Create turn order UI
+   - Develop action points
+   - Implement delay/ready actions
+
+2. **Actions**
+   - Design action system
+   - Implement standard/move/swift actions
+   - Create attack actions
+   - Develop special abilities
+
+3. **Combat Resolution**
+   - Implement attack rolls
+   - Create damage calculation
+   - Develop critical hits
+   - Implement combat maneuvers
+
+### Inventory System
+1. **Items**
+   - Design item data structure
+   - Implement item types
+   - Create item properties
+   - Develop item stacking
+
+2. **Equipment**
+   - Implement equipment slots
+   - Create equipment effects
+   - Develop equipment sets
+   - Implement durability system
+
+3. **UI**
+   - Design inventory UI
+   - Create tooltips
+   - Implement drag and drop
+   - Develop context menus
+
+## Technical Implementation
+
+### Character System
+```cpp
+// Character attributes
+USTRUCT(BlueprintType)
+struct FCharacterAttributes
+{
+    GENERATED_BODY()
+    
+    // Core attributes
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attributes")
+    int32 Strength;
+    
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attributes")
+    int32 Dexterity;
+    
+    // ... other attributes
+    
+    // Get attribute modifier
+    UFUNCTION(BlueprintCallable, Category = "Attributes")
+    int32 GetModifier(EAttributeType Attribute) const;
+};
+```
+
+### Combat System
+```cpp
+// Combat action
+UCLASS(Blueprintable)
+class UCombatAction : public UObject
+{
+    GENERATED_BODY()
+    
+public:
+    // Execute the action
+    UFUNCTION(BlueprintNativeEvent, Category = "Combat")
+    void Execute(AActor* Instigator, AActor* Target);
+    
+    // Can this action be executed?
+    UFUNCTION(BlueprintNativeEvent, Category = "Combat")
+    bool CanExecute(const AActor* Instigator) const;
+    
+    // Action type (standard, move, swift, etc.)
+    UPROPERTY(EditDefaultsOnly, Category = "Combat")
+    EActionType ActionType;
+};
+```
+
+### Inventory System
+```cpp
+// Inventory component
+UCLASS()
+class UInventoryComponent : public UActorComponent
+{
+    GENERATED_BODY()
+    
+public:
+    // Add item to inventory
+    UFUNCTION(BlueprintCallable, Category = "Inventory")
+    bool AddItem(UItem* Item);
+    
+    // Remove item from inventory
+    UFUNCTION(BlueprintCallable, Category = "Inventory")
+    bool RemoveItem(UItem* Item);
+    
+    // Get all items
+    UFUNCTION(BlueprintCallable, Category = "Inventory")
+    TArray<UItem*> GetItems() const;
+    
+private:
+    // Inventory items
+    UPROPERTY()
+    TArray<UItem*> Items;
+};
+```
+
+## Testing Plan
+
+### Unit Tests
+- Attribute calculations
+- Combat resolution
+- Inventory operations
+- Save/load functionality
+
+### Integration Tests
+- Character creation flow
+- Combat scenarios
+- Item interactions
+- Progression system
+
+### Performance Testing
+- Memory usage
+- Load times
+- Frame rate
+- Network performance
+
+## Risk Assessment
+
+### Technical Risks
+1. **Complex Rule Implementation**
+   - Mitigation: Start with simplified rules, iterate
+   - Create comprehensive test cases
+
+2. **Performance Issues**
+   - Mitigation: Profile regularly
+   - Optimize hot paths
+
+3. **Save Game Compatibility**
+   - Mitigation: Use versioned save format
+   - Implement save migration
+
+### Schedule Risks
+1. **Feature Creep**
+   - Mitigation: Stick to MVP features
+   - Regular scope reviews
+
+2. **Dependency Delays**
+   - Mitigation: Identify critical path
+   - Have fallback plans
+
+## Success Criteria
+1. Functional character system
+2. Working combat mechanics
+3. Complete inventory system
+4. Passing test suite
+5. Performance targets met
+
+## Next Steps
+1. Begin Phase 3: Combat Implementation
+2. Expand test coverage
+3. Start content creation
+
+## Related Documents
+- [Phase 1: Pre-production](phase1_preproduction.md)
+- [Phase 3: Combat Implementation](phase3_combat.md)
+
+---
+*Document Version: 1.0*  
+*Last Updated: 2023-11-15*
