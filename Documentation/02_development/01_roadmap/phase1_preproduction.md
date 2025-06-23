@@ -334,6 +334,23 @@ This document outlines the pre-production phase of the Pathfinder 1e implementat
   - [ ] Code review process followed
   - [ ] Technical debt documented
 
+## Development Approach
+
+### Solo Development Setup
+- **Developer**: Juan Manuel Plascencia
+- **Roles**:
+  - Game Design & Development
+  - Art & Animation
+  - Sound Design
+  - Testing & QA
+  - Production & Project Management
+
+### Tools & Resources
+- **Development**: Visual Studio, Unreal Engine 5.6
+- **Art**: [List your art tools]
+- **Version Control**: Git with LFS
+- **Project Management**: [Your chosen tool, e.g., Trello, Notion, etc.]
+
 ## Exit Criteria
 
 ### 1. Documentation Review

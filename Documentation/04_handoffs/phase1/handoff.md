@@ -75,20 +75,16 @@
 
 ## Team Structure
 
-### Core Team
-| Role | Name | Contact |
-|------|------|---------|
-| Project Lead | Juan Manuel Plascencia | juan@example.com |
-| Technical Director | [To be hired] | tbd@example.com |
-| Art Director | [To be hired] | tbd@example.com |
-| Lead Developer | [To be hired] | tbd@example.com |
-| QA Lead | [To be hired] | tbd@example.com |
+### Development Team
+| Role           | Name | Contact |
+|----------------|------|---------|
+| Solo Developer | Juan Manuel Plascencia | juan@example.com |
 
 ### Responsibilities
-- **Development**: [Team Members]
-- **Art/Design**: [Team Members]
-- **QA**: [Team Members]
-- **Production**: [Team Members]
+- **Development**: Juan Manuel Plascencia
+- **Art/Design**: Juan Manuel Plascencia
+- **QA**: Juan Manuel Plascencia
+- **Production**: Juan Manuel Plascencia
 
 ## Known Issues
 
@@ -97,7 +93,7 @@
 |----|-------------|--------|-------------------|
 | TD-001 | CI/CD pipeline setup incomplete | High | Phase 2, Sprint 1 |
 | TD-002 | Test coverage below target | Medium | Phase 2, Sprint 1 |
-| TD-003 | Team positions to be filled | High | Phase 2, Sprint 1 |
+| TD-003 | Consider outsourcing art/audio assets | Low | Phase 2, Backlog |
 
 ### Open Questions
 1. [Question 1]
