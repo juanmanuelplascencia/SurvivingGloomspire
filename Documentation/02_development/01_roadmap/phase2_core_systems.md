@@ -9,25 +9,55 @@ This document outlines the development of the core game systems for the Pathfind
 3. Create inventory and equipment system
 4. Implement basic AI
 
-## Milestones
+## Development Priorities
 
-### 1. Character System (Weeks 1-3)
-- [ ] Implement attribute system
-- [ ] Create character classes
-- [ ] Develop skill system
-- [ ] Implement level progression
+### 1. Character System (First Priority)
+- [ ] **Core Attributes**
+  - [ ] Implement base attribute system (STR, DEX, CON, INT, WIS, CHA)
+  - [ ] Create derived attributes (HP, AC, Saves)
+  - [ ] Implement attribute modifiers and bonuses
 
-### 2. Combat System (Weeks 4-6)
-- [ ] Design combat flow
-- [ ] Implement turn-based mechanics
-- [ ] Create action system
-- [ ] Develop damage and healing
+- [ ] **Character Progression**
+  - [ ] Design class system structure
+  - [ ] Implement experience and leveling
+  - [ ] Create basic class features
 
-### 3. Inventory & Equipment (Weeks 7-8)
-- [ ] Design inventory UI
-- [ ] Implement item system
-- [ ] Create equipment system
-- [ ] Develop item interactions
+- [ ] **Skills & Abilities**
+  - [ ] Implement skill system
+  - [ ] Create skill checks and DCs
+  - [ ] Design feat system framework
+
+### 2. Combat System (Second Priority)
+- [ ] **Core Combat Loop**
+  - [ ] Implement turn management
+  - [ ] Create action point system
+  - [ ] Design initiative system
+
+- [ ] **Combat Actions**
+  - [ ] Basic attacks and damage
+  - [ ] Movement and positioning
+  - [ ] Special abilities framework
+
+- [ ] **Combat Resolution**
+  - [ ] Attack roll calculations
+  - [ ] Damage application
+  - [ ] Status effects system
+
+### 3. Inventory & Equipment (Third Priority)
+- [ ] **Core Inventory**
+  - [ ] Basic inventory system
+  - [ ] Item stacking and management
+  - [ ] Weight/encumbrance system
+
+- [ ] **Equipment System**
+  - [ ] Equipment slots
+  - [ ] Item stats and modifiers
+  - [ ] Equipment swapping
+
+- [ ] **Item Interactions**
+  - [ ] Basic item usage
+  - [ ] Consumables
+  - [ ] Item conditions
 
 ## Detailed Tasks
 

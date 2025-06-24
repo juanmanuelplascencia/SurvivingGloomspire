@@ -9,25 +9,46 @@ This document details the implementation of the Pathfinder 1e combat system, inc
 3. Develop AI for combat encounters
 4. Implement combat UI and feedback
 
-## Milestones
+## Development Priorities
 
-### 1. Turn System (Weeks 1-2)
-- [ ] Implement initiative tracking
-- [ ] Create turn order UI
-- [ ] Develop action points system
-- [ ] Implement delay/ready actions
+### 1. Core Combat Loop (First Priority)
+- [ ] **Initiative & Turns**
+  - [ ] Implement initiative tracking
+  - [ ] Create turn order UI
+  - [ ] Develop action points system
+  - [ ] Implement delay/ready actions
 
-### 2. Combat Actions (Weeks 3-5)
-- [ ] Implement standard actions
-- [ ] Create movement system
-- [ ] Develop attack actions
-- [ ] Implement special abilities
+- [ ] **Action Economy**
+  - [ ] Standard/move/swift actions
+  - [ ] Attacks of opportunity
+  - [ ] Full-round actions
+  - [ ] Free actions
 
-### 3. Combat Resolution (Weeks 6-8)
-- [ ] Create damage system
-- [ ] Implement conditions
-- [ ] Develop combat log
-- [ ] Create victory/defeat conditions
+### 2. Combat Actions (Second Priority)
+- [ ] **Movement System**
+  - [ ] Grid-based movement
+  - [ ] Pathfinding
+  - [ ] Difficult terrain
+  - [ ] Flanking rules
+
+- [ ] **Attack System**
+  - [ ] Melee attacks
+  - [ ] Ranged attacks
+  - [ ] Combat maneuvers
+  - [ ] Critical hits
+
+### 3. Combat Resolution (Third Priority)
+- [ ] **Damage & Conditions**
+  - [ ] Damage types and resistance
+  - [ ] Status effects
+  - [ ] Dying/unconscious states
+  - [ ] Healing mechanics
+
+- [ ] **Combat Feedback**
+  - [ ] Combat log
+  - [ ] Visual effects
+  - [ ] Sound effects
+  - [ ] Victory/defeat conditions
 
 ## Detailed Implementation
 

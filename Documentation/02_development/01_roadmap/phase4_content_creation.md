@@ -9,31 +9,59 @@ This document outlines the content creation phase, focusing on expanding the gam
 3. Expand game world
 4. Polish and balance gameplay
 
-## Milestones
+## Development Priorities
 
-### 1. Items & Equipment (Weeks 1-3)
-- [ ] Design item system
-- [ ] Create base items
-- [ ] Implement magical items
-- [ ] Balance item stats
+### 1. Items & Equipment (First Priority)
+- [ ] **Core Item System**
+  - [ ] Design item data structure
+  - [ ] Implement base item types
+  - [ ] Create item database
+  - [ ] Set up item properties
 
-### 2. Abilities & Spells (Weeks 4-6)
-- [ ] Design ability system
-- [ ] Create class abilities
-- [ ] Implement spells
-- [ ] Balance abilities
+- [ ] **Equipment System**
+  - [ ] Implement equipment slots
+  - [ ] Create armor/weapon types
+  - [ ] Set up stat modifiers
+  - [ ] Implement item conditions
 
-### 3. Characters & Enemies (Weeks 7-9)
-- [ ] Design character classes
-- [ ] Create enemy types
-- [ ] Implement NPCs
-- [ ] Balance encounters
+### 2. Abilities & Spells (Second Priority)
+- [ ] **Ability Framework**
+  - [ ] Design ability system
+  - [ ] Create base ability class
+  - [ ] Implement cooldowns
+  - [ ] Set up targeting system
 
-### 4. Levels & Environments (Weeks 10-12)
-- [ ] Design levels
-- [ ] Create environments
-- [ ] Implement interactive elements
-- [ ] Polish visuals
+- [ ] **Spell System**
+  - [ ] Implement spell levels
+  - [ ] Create spell components
+  - [ ] Design spell effects
+  - [ ] Set up spell learning
+
+### 3. Characters & Enemies (Third Priority)
+- [ ] **Character Development**
+  - [ ] Design class progression
+  - [ ] Create archetypes
+  - [ ] Implement racial traits
+  - [ ] Set up feats
+
+- [ ] **Enemy Design**
+  - [ ] Create enemy types
+  - [ ] Implement AI behaviors
+  - [ ] Design boss encounters
+  - [ ] Balance combat difficulty
+
+### 4. Levels & Environments (Final Priority)
+- [ ] **Level Design**
+  - [ ] Create level layouts
+  - [ ] Design encounter areas
+  - [ ] Implement interactive elements
+  - [ ] Set up lighting/atmosphere
+
+- [ ] **Environment Art**
+  - [ ] Create environment assets
+  - [ ] Set up materials/textures
+  - [ ] Implement particle effects
+  - [ ] Polish visual feedback
 
 ## Content Pipeline
 
