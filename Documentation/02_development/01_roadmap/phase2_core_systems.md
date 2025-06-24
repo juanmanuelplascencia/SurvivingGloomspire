@@ -39,7 +39,14 @@ This document outlines the development of the core game systems for the Pathfind
     - [x] Add skill check functionality
     - [x] Implement DC calculations
     - [x] Add support for class skills
-  - [ ] Design feat system framework
+  - [x] Design feat system framework (In Progress)
+    - [x] Create feat types and enums
+    - [x] Implement feat data structures
+    - [x] Create feat component for character feats
+    - [x] Add feat prerequisites system
+    - [ ] Implement feat benefits application
+    - [ ] Create feat data assets
+    - [ ] Add debug visualization for feats
   - [ ] Implement feat prerequisites and benefits
 
 ### 2. Combat System (Second Priority)

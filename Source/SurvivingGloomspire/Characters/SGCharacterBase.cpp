@@ -34,6 +34,10 @@ ASGCharacterBase::ASGCharacterBase(const FObjectInitializer& ObjectInitializer)
     // Create and initialize the skill component
     SkillComponent = CreateDefaultSubobject<USGSkillComponent>(TEXT("SkillComponent"));
     
+    // Create and initialize the feat component
+    FeatComponent = CreateDefaultSubobject<USGFeatComponent>(TEXT("FeatComponent"));
+    FeatComponent->Initialize(this);
+    
     // Initialize default attribute values
     InitializeDefaultAttributes();
     
@@ -49,6 +53,12 @@ void ASGCharacterBase::BeginPlay()
     if (SkillComponent)
     {
         SkillComponent->Initialize(this);
+    }
+    
+    // Initialize the feat component with this character
+    if (FeatComponent)
+    {
+        FeatComponent->Initialize(this);
     }
     
     // Log initial state

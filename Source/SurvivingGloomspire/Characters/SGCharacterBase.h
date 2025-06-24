@@ -11,6 +11,7 @@
 #include "SGSavingThrows.h"
 #include "SGClassComponent.h"
 #include "SGSkillComponent.h"
+#include "SGFeatComponent.h"
 #include "SGCharacterBase.generated.h"
 
 // Forward declarations
@@ -168,6 +169,17 @@ public:
     USGSkillComponent* GetSkillComponent() const { return SkillComponent; }
     
     // ======================================================================
+    // Feats - Public Interface
+    // ======================================================================
+    
+    /**
+     * Gets the character's feat component
+     * @return The feat component that manages the character's feats
+     */
+    UFUNCTION(BlueprintCallable, Category = "Character|Feats")
+    USGFeatComponent* GetFeatComponent() const { return FeatComponent; }
+    
+    // ======================================================================
     // Debug & Development - Public Interface
     // ======================================================================
     
@@ -225,6 +237,10 @@ private:
     /** Handles character skills and skill checks */
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = "true"))
     TObjectPtr<USGSkillComponent> SkillComponent;
+    
+    /** Handles character feats and feat-related abilities */
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = "true"))
+    TObjectPtr<USGFeatComponent> FeatComponent;
     
     // ======================================================================
     // Private Properties
