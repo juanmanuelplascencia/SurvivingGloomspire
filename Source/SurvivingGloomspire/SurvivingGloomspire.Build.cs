@@ -20,8 +20,7 @@ public class SurvivingGloomspire : ModuleRules
             Path.Combine(ModuleDirectory, "Characters/Classes"),
             Path.Combine(ModuleDirectory, "Characters/Components"),
             Path.Combine(ModuleDirectory, "Characters/Feats"),
-            Path.Combine(ModuleDirectory, "Characters/Skills"),
-            Path.Combine(ModuleDirectory, "Characters/DataAssets")
+            Path.Combine(ModuleDirectory, "Characters/Skills")
         ]);
         
         
