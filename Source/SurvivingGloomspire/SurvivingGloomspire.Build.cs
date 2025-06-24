@@ -95,7 +95,7 @@ public class SurvivingGloomspire : ModuleRules
         #endif
         
         // Add include paths for module subdirectories
-        
+        PublicIncludePaths.Add(Path.Combine(ModuleDirectory, "Characters"));
         
         // Add source files for the logging system
         PrivateIncludePathModuleNames.AddRange(
