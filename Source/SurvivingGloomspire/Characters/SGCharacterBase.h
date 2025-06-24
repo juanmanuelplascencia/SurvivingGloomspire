@@ -9,6 +9,7 @@
 #include "SGHitPoints.h"
 #include "SGArmorClass.h"
 #include "SGSavingThrows.h"
+#include "SGClassComponent.h"
 #include "SGCharacterBase.generated.h"
 
 // Forward declarations
@@ -144,6 +145,17 @@ public:
     int32 ApplyHealing(int32 Amount);
 
     // ======================================================================
+    // Class & Progression - Public Interface
+    // ======================================================================
+    
+    /**
+     * Gets the character's class component
+     * @return The class component that handles class progression
+     */
+    UFUNCTION(BlueprintCallable, Category = "Character|Progression")
+    USGClassComponent* GetClassComponent() const { return ClassComponent; }
+    
+    // ======================================================================
     // Debug & Development - Public Interface
     // ======================================================================
     
@@ -190,6 +202,14 @@ protected:
     virtual void OnAttributeChanged(ESGAttributeType AttributeType);
     
 private:
+    // ======================================================================
+    // Components
+    // ======================================================================
+    
+    /** Handles character class progression, levels, and experience */
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = "true"))
+    TObjectPtr<USGClassComponent> ClassComponent;
+    
     // ======================================================================
     // Private Properties
     // ======================================================================

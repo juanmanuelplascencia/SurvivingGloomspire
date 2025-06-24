@@ -6,6 +6,7 @@
 #include "SGHitPoints.h"
 #include "SGArmorClass.h"
 #include "SGSavingThrows.h"
+#include "SGClassType.h"
 
 // Define the log category for this class
 DEFINE_LOG_CATEGORY_STATIC(LogSGCharacter, Log, All);
@@ -25,6 +26,9 @@ ASGCharacterBase::ASGCharacterBase(const FObjectInitializer& ObjectInitializer)
 {
     // Set this character to call Tick() every frame
     PrimaryActorTick.bCanEverTick = true;
+    
+    // Create and initialize the class component
+    ClassComponent = CreateDefaultSubobject<USGClassComponent>(TEXT("ClassComponent"));
     
     // Initialize default attribute values
     InitializeDefaultAttributes();
@@ -257,21 +261,43 @@ void ASGCharacterBase::DebugLogState(bool bForce) const
         return;
     }
     
-    FString DebugString = TEXT("\n=== Character State ===\n");
+    // Log basic character info
+    FString DebugString = FString::Printf(TEXT("=== %s ===\n"), *GetName());
+    DebugString += FString::Printf(TEXT("Position: %s\n"), *GetActorLocation().ToString());
     
-    // Log base attributes
-    DebugString += TEXT("Base Attributes:\n");
+    // Log class and level information
+    if (ClassComponent)
+    {
+        DebugString += TEXT("\nClass & Level:\n");
+        const TArray<FSGCharacterClassLevel>& ClassLevels = ClassComponent->GetClassLevels();
+        for (const FSGCharacterClassLevel& ClassLevel : ClassLevels)
+        {
+            DebugString += FString::Printf(TEXT("  %s %d\n"),
+                *GetClassTypeAsString(ClassLevel.ClassType),
+                ClassLevel.Level);
+        }
+        DebugString += FString::Printf(TEXT("Total Level: %d\n"), ClassComponent->GetTotalLevels());
+        DebugString += FString::Printf(TEXT("XP: %d/%d\n"), 
+            ClassComponent->GetCurrentXP(),
+            ClassComponent->GetXPForNextLevel());
+    }
+    
+    // Log attributes
+    DebugString += TEXT("\nAttributes:\n");
     for (const auto& Elem : Attributes)
     {
-        const FString AttrName = GetAttributeName(static_cast<ESGAttributeType>(Elem.Key));
-        DebugString += FString::Printf(TEXT("  %s: %d (Mod: %+d)\n"), 
-            *AttrName, Elem.Value.BaseValue, Elem.Value.Modifier);
+        const ESGAttributeType AttrType = Elem.Key;
+        const FSGAttributeData& Attr = Elem.Value;
+        DebugString += FString::Printf(TEXT("  %s: %d (Mod: %+d)\n"),
+            *GetAttributeName(AttrType),
+            Attr.BaseValue,
+            GetAttributeModifier(AttrType));
     }
     
     // Log derived attributes
     DebugString += TEXT("\nDerived Attributes:\n");
-    DebugString += FString::Printf(TEXT("  HP: %d/%d (Temp: %d)\n"), 
-        HitPoints.Current, 
+    DebugString += FString::Printf(TEXT("  HP: %d/%d (Temp: %d)\n"),
+        HitPoints.Current,
         HitPoints.Max,
         HitPoints.Temporary);
         

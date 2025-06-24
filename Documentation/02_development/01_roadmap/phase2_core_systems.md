@@ -12,17 +12,22 @@ This document outlines the development of the core game systems for the Pathfind
 ## Development Priorities
 
 ### 1. Character System (First Priority)
-- [x] **Core Attributes**
+- [x] **Core Attributes** (Completed)
   - [x] Implement base attribute system (STR, DEX, CON, INT, WIS, CHA)
   - [x] Create derived attributes (HP, AC, Saves)
   - [x] Implement attribute modifiers and bonuses
   - [x] Add damage and healing systems
   - [x] Implement debug logging for attributes
+  - [x] Reorganize attribute types into separate files for better maintainability
 
-- [ ] **Character Progression**
-  - [ ] Design class system structure
-  - [ ] Implement experience and leveling
-  - [ ] Create basic class features
+- [x] **Character Progression** (Completed)
+  - [x] Design class system structure
+  - [x] Implement experience and leveling system
+  - [x] Create class component for character progression
+  - [x] Implement XP progression and level-up logic
+  - [x] Add class data assets for class definitions
+  - [x] Integrate with character base class
+  - [x] Add debug visualization for class and level info
 
 - [ ] **Skills & Abilities**
   - [ ] Implement skill system
