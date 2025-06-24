@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "SGAttributeTypes.h"
+#include "SGDerivedAttributesTypes.h"
 #include "SGCharacterBase.generated.h"
 
 // Forward declarations
@@ -20,71 +21,30 @@ class SURVIVINGGLOOMSPIRE_API ASGCharacterBase : public ACharacter
 {
     GENERATED_BODY()
     
-    // Enable/disable debug logging for this class
-    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Debug", meta = (AllowPrivateAccess = "true"))
-    bool bEnableDebugLogging = true;
-
 public:
-    /**
-     * Default constructor.
-     * Initializes default values for this character's properties.
-     */
-    ASGCharacterBase(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
-
-protected:
-    /**
-     * Called when the game starts or when spawned.
-     * Use this for any initialization that needs to happen after the character is fully constructed.
-     */
-    virtual void BeginPlay() override;
+    // ======================================================================
+    // Construction & Core Overrides
+    // ======================================================================
     
-    /**
-     * Outputs debug information about the character's current state.
-     * @param bForce - If true, will log even if debug logging is disabled
-     */
-    UFUNCTION(BlueprintCallable, Category = "Debug")
-    virtual void DebugLogState(bool bForce = false) const;
-
-    // Core Attributes
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attributes", meta = (DisplayName = "Strength"))
-    FSGAttributeData Strength;
-
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attributes", meta = (DisplayName = "Dexterity"))
-    FSGAttributeData Dexterity;
-
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attributes", meta = (DisplayName = "Constitution"))
-    FSGAttributeData Constitution;
-
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attributes", meta = (DisplayName = "Intelligence"))
-    FSGAttributeData Intelligence;
-
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attributes", meta = (DisplayName = "Wisdom"))
-    FSGAttributeData Wisdom;
-
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attributes", meta = (DisplayName = "Charisma"))
-    FSGAttributeData Charisma;
-
-public:
+    /** Default constructor */
+    ASGCharacterBase(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
+    
     //~ Begin AActor Interface
-    /**
-     * Called every frame.
-     * @param DeltaTime - The time since the last tick in seconds
-     */
+    virtual void BeginPlay() override;
     virtual void Tick(float DeltaTime) override;
-
-    /**
-     * Called to bind functionality to input.
-     * @param PlayerInputComponent - The input component to bind to
-     */
     virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
     //~ End AActor Interface
-
+    
+    // ======================================================================
+    // Attribute Management - Public Interface
+    // ======================================================================
+    
     /**
      * Gets the attribute data for the specified attribute type.
      * @param AttributeType - The type of attribute to retrieve
      * @return The attribute data structure
      */
-    UFUNCTION(BlueprintCallable, Category = "Attributes")
+    UFUNCTION(BlueprintCallable, Category = "Character|Attributes")
     FSGAttributeData GetAttribute(ESGAttributeType AttributeType) const;
 
     /**
@@ -92,14 +52,14 @@ public:
      * @param AttributeType - The type of attribute to modify
      * @param NewValue - The new base value (will be clamped between 1-30)
      */
-    UFUNCTION(BlueprintCallable, Category = "Attributes")
+    UFUNCTION(BlueprintCallable, Category = "Character|Attributes")
     void SetBaseAttribute(ESGAttributeType AttributeType, int32 NewValue);
 
     /**
-     * Recalculates all attribute modifiers.
+     * Recalculates all attribute modifiers and derived attributes.
      * Call this after making multiple attribute changes for better performance.
      */
-    UFUNCTION(BlueprintCallable, Category = "Attributes")
+    UFUNCTION(BlueprintCallable, Category = "Character|Attributes")
     void CalculateAllModifiers();
 
     /**
@@ -107,7 +67,7 @@ public:
      * @param AttributeType - The type of attribute
      * @return The calculated modifier value
      */
-    UFUNCTION(BlueprintCallable, Category = "Attributes")
+    UFUNCTION(BlueprintCallable, Category = "Character|Attributes")
     int32 GetAttributeModifier(ESGAttributeType AttributeType) const;
     
     /**
@@ -115,14 +75,101 @@ public:
      * @param AttributeType - The type of attribute
      * @return The current base value
      */
-    UFUNCTION(BlueprintPure, Category = "Attributes")
+    UFUNCTION(BlueprintPure, Category = "Character|Attributes")
     int32 GetAttributeValue(ESGAttributeType AttributeType) const;
     
+    /**
+     * Gets the current derived attributes
+     * @return Current derived attributes structure
+     */
+    UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Character|Attributes")
+    FSGDerivedAttributes GetDerivedAttributes() const { return DerivedAttributes; }
+    
+    /**
+     * Gets the base values used for derived attribute calculations
+     * @return Reference to the base values structure
+     */
+    UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Character|Attributes")
+    FSDerivedAttributeBaseValues GetDerivedAttributeBaseValues() const { return DerivedAttributeBaseValues; }
+
     /**
      * Helper function to get attribute display name as string.
      * @param AttributeType - The type of attribute
      * @return Display name as FString
      */
-    UFUNCTION(BlueprintPure, Category = "Attributes")
+    UFUNCTION(BlueprintPure, Category = "Character|Attributes")
     static FString GetAttributeName(ESGAttributeType AttributeType);
+
+    // ======================================================================
+    // Derived Attributes & Combat - Public Interface
+    // ======================================================================
+    
+    /**
+     * Calculates all derived attributes based on current base attributes and base values
+     */
+    UFUNCTION(BlueprintCallable, Category = "Character|Combat")
+    void CalculateDerivedAttributes();
+    
+    /**
+     * Applies damage to the character, reducing hit points
+     * @param Amount Amount of damage to apply
+     * @return True if the character was brought to 0 or fewer hit points
+     */
+    UFUNCTION(BlueprintCallable, Category = "Character|Combat")
+    bool ApplyDamage(int32 Amount);
+    
+    /**
+     * Heals the character, restoring hit points up to maximum
+     * @param Amount Amount of healing to apply
+     * @return Actual amount of healing applied
+     */
+    UFUNCTION(BlueprintCallable, Category = "Character|Combat")
+    int32 ApplyHealing(int32 Amount);
+
+    // ======================================================================
+    // Debug & Development - Public Interface
+    // ======================================================================
+    
+    /**
+     * Logs the current state of all attributes (base and derived)
+     * @param bForce If true, will log even if debug logging is disabled
+     */
+    UFUNCTION(BlueprintCallable, Category = "Debug")
+    virtual void DebugLogState(bool bForce = false) const;
+
+protected:
+    // ======================================================================
+    // Core Character Properties
+    // ======================================================================
+    
+    /** Map of all character attributes */
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Character|Attributes")
+    TMap<ESGAttributeType, FSGAttributeData> Attributes;
+
+    /** Derived character attributes (HP, AC, Saves) */
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Character|Attributes")
+    FSGDerivedAttributes DerivedAttributes;
+    
+    /** Base values used for derived attribute calculations */
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character|Attributes")
+    FSDerivedAttributeBaseValues DerivedAttributeBaseValues;
+
+    // ======================================================================
+    // Protected Methods
+    // ======================================================================
+    
+    /** Initializes default attribute values */
+    virtual void InitializeDefaultAttributes();
+    
+    /** Called when an attribute changes value */
+    virtual void OnAttributeChanged(ESGAttributeType AttributeType);
+    
+private:
+    // ======================================================================
+    // Private Properties
+    // ======================================================================
+    
+    /** Controls whether debug logging is enabled for this character */
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Debug", meta = (AllowPrivateAccess = "true"))
+    bool bEnableDebugLogging = true;
 };

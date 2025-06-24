@@ -2,230 +2,297 @@
 
 #include "SGCharacterBase.h"
 #include "SGAttributeTypes.h"
+#include "SGDerivedAttributesTypes.h"
 
-// Log category for this class
+// Define the log category for this class
 DEFINE_LOG_CATEGORY_STATIC(LogSGCharacter, Log, All);
 
-// Helper macro for debug logging
+// Debug logging macro for this class
 #define SG_LOG(Verbosity, Format, ...) \
     if (bEnableDebugLogging) { \
-        UE_LOG(LogSGCharacter, Verbosity, TEXT("%s: " Format), *GetName(), ##__VA_ARGS__); \
+        UE_LOG(LogSGCharacter, Verbosity, TEXT("%s: ") Format, *GetName(), ##__VA_ARGS__); \
     }
+
+// ======================================================================
+// Construction & Initialization
+// ======================================================================
 
 ASGCharacterBase::ASGCharacterBase(const FObjectInitializer& ObjectInitializer)
     : Super(ObjectInitializer)
 {
+    // Set this character to call Tick() every frame
     PrimaryActorTick.bCanEverTick = true;
-    PrimaryActorTick.bStartWithTickEnabled = true;
     
-    // Initialize all attributes with default values
-    TArray<FSGAttributeData*> AllAttributes = {
-        &Strength,
-        &Dexterity,
-        &Constitution,
-        &Intelligence,
-        &Wisdom,
-        &Charisma
-    };
+    // Initialize default attribute values
+    InitializeDefaultAttributes();
     
-    for (FSGAttributeData* Attr : AllAttributes)
-    {
-        if (Attr)
-        {
-            Attr->BaseValue = 10;
-            Attr->CalculateModifier();
-        }
-    }
-    
-    SG_LOG(Log, "Character initialized with default attributes");
-    ASGCharacterBase::DebugLogState(true);
+    // Calculate initial modifiers and derived attributes
+    CalculateAllModifiers();
 }
 
 void ASGCharacterBase::BeginPlay()
 {
     Super::BeginPlay();
     
-    SG_LOG(Log, "Character spawned in level");
-    
-    // Verify all attributes are properly initialized
-    if (Strength.BaseValue == 0 || Dexterity.BaseValue == 0 || 
-        Constitution.BaseValue == 0 || Intelligence.BaseValue == 0 || 
-        Wisdom.BaseValue == 0 || Charisma.BaseValue == 0)
-    {
-        SG_LOG(Warning, "One or more attributes not properly initialized!");
-    }
+    // Log initial state
+    DebugLogState(true);
 }
 
 void ASGCharacterBase::Tick(float DeltaTime)
 {
     Super::Tick(DeltaTime);
-    
-    // Example of debug visualization that could be toggled
-    if (bEnableDebugLogging)
-    {
-        // Add any per-frame debug visualization here
-    }
 }
 
-// Called to bind functionality to input
 void ASGCharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
     Super::SetupPlayerInputComponent(PlayerInputComponent);
 }
 
+void ASGCharacterBase::InitializeDefaultAttributes()
+{
+    // Clear any existing attributes
+    Attributes.Reset();
+    
+    // Set default attribute values (10 is average in Pathfinder)
+    Attributes.Add(ESGAttributeType::STR, FSGAttributeData());
+    Attributes.Add(ESGAttributeType::DEX, FSGAttributeData());
+    Attributes.Add(ESGAttributeType::CON, FSGAttributeData());
+    Attributes.Add(ESGAttributeType::INT, FSGAttributeData());
+    Attributes.Add(ESGAttributeType::WIS, FSGAttributeData());
+    Attributes.Add(ESGAttributeType::CHA, FSGAttributeData());
+    
+    // Initialize derived attributes with default values
+    DerivedAttributes = FSGDerivedAttributes();
+    
+    // Set default derived attribute base values
+    DerivedAttributeBaseValues = FSDerivedAttributeBaseValues();
+    DerivedAttributeBaseValues.BaseHitPoints = 10; // Base HP for level 1 character
+    DerivedAttributeBaseValues.BaseFortitudeSave = 2;
+    DerivedAttributeBaseValues.BaseReflexSave = 0;
+    DerivedAttributeBaseValues.BaseWillSave = 2;
+    
+    SG_LOG(Log, TEXT("Initialized default attributes"));
+}
+
+// ======================================================================
+// Attribute Management
+// ======================================================================
+
 FSGAttributeData ASGCharacterBase::GetAttribute(ESGAttributeType AttributeType) const
 {
-    const FSGAttributeData* AttributePtr = nullptr;
-    
-    switch (AttributeType)
+    const FSGAttributeData* FoundAttr = Attributes.Find(AttributeType);
+    if (FoundAttr)
     {
-    case ESGAttributeType::STR: AttributePtr = &Strength; break;
-    case ESGAttributeType::DEX: AttributePtr = &Dexterity; break;
-    case ESGAttributeType::CON: AttributePtr = &Constitution; break;
-    case ESGAttributeType::INT: AttributePtr = &Intelligence; break;
-    case ESGAttributeType::WIS: AttributePtr = &Wisdom; break;
-    case ESGAttributeType::CHA: AttributePtr = &Charisma; break;
-    default:
-        SG_LOG(Warning, "GetAttribute: Invalid attribute type: %d", static_cast<int32>(AttributeType));
-        return FSGAttributeData();
+        return *FoundAttr;
     }
     
-    if (!AttributePtr)
-    {
-        SG_LOG(Error, "GetAttribute: Null attribute pointer for type: %s", *GetAttributeName(AttributeType));
-        return FSGAttributeData();
-    }
-    
-    return *AttributePtr;
+    SG_LOG(Warning, TEXT("Attribute type %d not found, returning default"), static_cast<int32>(AttributeType));
+    return FSGAttributeData();
 }
 
 void ASGCharacterBase::SetBaseAttribute(ESGAttributeType AttributeType, int32 NewValue)
 {
-    FSGAttributeData* AttributeToModify = nullptr;
-    const int32 ClampedValue = FMath::Clamp(NewValue, 1, 30); // Standard D&D/Pathfinder range
+    // Clamp value between 1 and 30 (Pathfinder rules)
+    const int32 ClampedValue = FMath::Clamp(NewValue, 1, 30);
     
-    switch (AttributeType)
+    if (FSGAttributeData* Attribute = Attributes.Find(AttributeType))
     {
-    case ESGAttributeType::STR: AttributeToModify = &Strength; break;
-    case ESGAttributeType::DEX: AttributeToModify = &Dexterity; break;
-    case ESGAttributeType::CON: AttributeToModify = &Constitution; break;
-    case ESGAttributeType::INT: AttributeToModify = &Intelligence; break;
-    case ESGAttributeType::WIS: AttributeToModify = &Wisdom; break;
-    case ESGAttributeType::CHA: AttributeToModify = &Charisma; break;
-    default:
-        SG_LOG(Warning, "SetBaseAttribute: Invalid attribute type: %d", static_cast<int32>(AttributeType));
-        return;
-    }
-    
-    if (AttributeToModify)
-    {
-        const int32 OldValue = AttributeToModify->BaseValue;
-        if (OldValue != ClampedValue)
+        if (Attribute->BaseValue != ClampedValue)
         {
-            AttributeToModify->BaseValue = ClampedValue;
-            AttributeToModify->CalculateModifier();
+            const int32 OldValue = Attribute->BaseValue;
+            Attribute->BaseValue = ClampedValue;
+            Attribute->CalculateModifier();
             
-            SG_LOG(Log, "Attribute %s changed: %d -> %d (Modifier: %d)", 
+            SG_LOG(Log, TEXT("Attribute %s changed: %d -> %d (Modifier: %d)"), 
                 *GetAttributeName(AttributeType), 
                 OldValue, 
                 ClampedValue, 
-                AttributeToModify->Modifier);
+                Attribute->Modifier);
                 
-            // Broadcast any attribute change delegates here if needed
-            // OnAttributeChanged.Broadcast(AttributeType, OldValue, ClampedValue);
+            // Recalculate derived attributes that depend on this attribute
+            CalculateDerivedAttributes();
+            
+            // Notify derived classes that an attribute changed
+            OnAttributeChanged(AttributeType);
         }
     }
     else
     {
-        SG_LOG(Error, "SetBaseAttribute: Failed to find attribute for type: %s", *GetAttributeName(AttributeType));
+        SG_LOG(Error, TEXT("Failed to find attribute for type: %s"), *GetAttributeName(AttributeType));
     }
 }
 
 void ASGCharacterBase::CalculateAllModifiers()
 {
-    TArray<TPair<FString, FSGAttributeData*>> Attributes = {
-        {TEXT("Strength"), &Strength},
-        {TEXT("Dexterity"), &Dexterity},
-        {TEXT("Constitution"), &Constitution},
-        {TEXT("Intelligence"), &Intelligence},
-        {TEXT("Wisdom"), &Wisdom},
-        {TEXT("Charisma"), &Charisma}
-    };
-    
-    for (auto& Pair : Attributes)
+    // Recalculate all attribute modifiers
+    for (auto& Elem : Attributes)
     {
-        if (Pair.Value)
-        {
-            const int32 OldModifier = Pair.Value->Modifier;
-            Pair.Value->CalculateModifier();
-            
-            if (OldModifier != Pair.Value->Modifier)
-            {
-                SG_LOG(Log, "%s modifier updated: %d -> %d", 
-                    *Pair.Key, 
-                    OldModifier, 
-                    Pair.Value->Modifier);
-            }
-        }
+        Elem.Value.CalculateModifier();
     }
+    
+    // Recalculate derived attributes after all modifiers are updated
+    CalculateDerivedAttributes();
+    
+    SG_LOG(Log, TEXT("Recalculated all attribute modifiers and derived attributes"));
 }
 
 int32 ASGCharacterBase::GetAttributeModifier(ESGAttributeType AttributeType) const
 {
-    const FSGAttributeData* AttributePtr = nullptr;
-    
-    switch (AttributeType)
+    if (const FSGAttributeData* Attribute = Attributes.Find(AttributeType))
     {
-    case ESGAttributeType::STR: AttributePtr = &Strength; break;
-    case ESGAttributeType::DEX: AttributePtr = &Dexterity; break;
-    case ESGAttributeType::CON: AttributePtr = &Constitution; break;
-    case ESGAttributeType::INT: AttributePtr = &Intelligence; break;
-    case ESGAttributeType::WIS: AttributePtr = &Wisdom; break;
-    case ESGAttributeType::CHA: AttributePtr = &Charisma; break;
-    default:
-        SG_LOG(Warning, "GetAttributeModifier: Invalid attribute type: %d", static_cast<int32>(AttributeType));
-        return 0;
+        return Attribute->Modifier;
     }
     
-    if (!AttributePtr)
-    {
-        SG_LOG(Error, "GetAttributeModifier: Null attribute pointer for type: %s", *GetAttributeName(AttributeType));
-        return 0;
-    }
-    
-    return AttributePtr->Modifier;
+    SG_LOG(Warning, TEXT("Attribute type %d not found, returning 0"), static_cast<int32>(AttributeType));
+    return 0;
 }
 
 int32 ASGCharacterBase::GetAttributeValue(ESGAttributeType AttributeType) const
 {
-    const FSGAttributeData* AttributePtr = nullptr;
-    
-    switch (AttributeType)
+    if (const FSGAttributeData* Attribute = Attributes.Find(AttributeType))
     {
-    case ESGAttributeType::STR: AttributePtr = &Strength; break;
-    case ESGAttributeType::DEX: AttributePtr = &Dexterity; break;
-    case ESGAttributeType::CON: AttributePtr = &Constitution; break;
-    case ESGAttributeType::INT: AttributePtr = &Intelligence; break;
-    case ESGAttributeType::WIS: AttributePtr = &Wisdom; break;
-    case ESGAttributeType::CHA: AttributePtr = &Charisma; break;
-    default:
-        SG_LOG(Warning, "GetAttributeValue: Invalid attribute type: %d", static_cast<int32>(AttributeType));
-        return 0;
+        return Attribute->BaseValue;
     }
     
-    if (!AttributePtr)
-    {
-        SG_LOG(Error, "GetAttributeValue: Null attribute pointer for type: %s", *GetAttributeName(AttributeType));
-        return 0;
-    }
-    
-    return AttributePtr->BaseValue;
+    SG_LOG(Warning, TEXT("Attribute type %d not found, returning 0"), static_cast<int32>(AttributeType));
+    return 0;
 }
 
 FString ASGCharacterBase::GetAttributeName(ESGAttributeType AttributeType)
 {
-    return GetAttributeTypeAsString(AttributeType);
+    // Use GetStaticEnum with the enum type directly
+    const UEnum* EnumPtr = FindObject<UEnum>(nullptr, TEXT("/Script/SurvivingGloomspire.ESGAttributeType"), true);
+    if (!EnumPtr)
+    {
+        // Fallback to static find if the first approach fails
+        EnumPtr = FindFirstObject<UEnum>(TEXT("ESGAttributeType"));
+        if (!EnumPtr)
+        {
+            return FString("Unknown");
+        }
+    }
+    
+    FString DisplayName = EnumPtr->GetDisplayNameTextByIndex(static_cast<int32>(AttributeType)).ToString();
+    return DisplayName.IsEmpty() ? FString("Unknown") : DisplayName;
 }
+
+// ======================================================================
+// Derived Attributes & Combat
+// ======================================================================
+
+void ASGCharacterBase::CalculateDerivedAttributes()
+{
+    if (!Attributes.Contains(ESGAttributeType::CON) || !Attributes.Contains(ESGAttributeType::DEX))
+    {
+        SG_LOG(Error, TEXT("Missing required attributes for calculating derived attributes"));
+        return;
+    }
+
+    const int32 ConMod = GetAttributeModifier(ESGAttributeType::CON);
+    const int32 DexMod = GetAttributeModifier(ESGAttributeType::DEX);
+    const int32 WisMod = GetAttributeModifier(ESGAttributeType::WIS);
+
+    // Calculate Max HP (Base + CON mod * level, minimum 1 per level)
+    const int32 MaxHP = FMath::Max(1, DerivedAttributeBaseValues.BaseHitPoints + ConMod);
+    
+    // Calculate AC (10 + armor + shield + DEX mod + size + natural + deflection + dodge + misc)
+    const int32 AC = 10 + 
+                     DerivedAttributeBaseValues.ArmorBonus + 
+                     DerivedAttributeBaseValues.ShieldBonus + 
+                     DexMod + 
+                     DerivedAttributeBaseValues.NaturalArmor + 
+                     DerivedAttributeBaseValues.DeflectionBonus + 
+                     DerivedAttributeBaseValues.DodgeBonus;
+
+    // Update derived attributes
+    DerivedAttributes.MaxHitPoints = FMath::Max(1, MaxHP);
+    
+    // Only auto-fill HP if it hasn't been set yet or is invalid
+    if (DerivedAttributes.HitPoints <= 0 || DerivedAttributes.HitPoints > DerivedAttributes.MaxHitPoints)
+    {
+        DerivedAttributes.HitPoints = DerivedAttributes.MaxHitPoints;
+    }
+    
+    // Calculate different AC types
+    DerivedAttributes.ArmorClass = FMath::Max(10, AC);
+    
+    // Touch AC is AC without armor, shield, and natural armor bonuses
+    DerivedAttributes.TouchArmorClass = FMath::Max(10, 
+        10 + DexMod + DerivedAttributeBaseValues.DeflectionBonus + DerivedAttributeBaseValues.DodgeBonus);
+        
+    // Flat-footed AC is AC without DEX and dodge bonuses
+    DerivedAttributes.FlatFootedArmorClass = FMath::Max(10, 
+        10 + DerivedAttributeBaseValues.ArmorBonus + DerivedAttributeBaseValues.ShieldBonus + 
+        DerivedAttributeBaseValues.NaturalArmor + DerivedAttributeBaseValues.DeflectionBonus);
+
+    // Calculate saving throws
+    DerivedAttributes.FortitudeSave = DerivedAttributeBaseValues.BaseFortitudeSave + ConMod;
+    DerivedAttributes.ReflexSave = DerivedAttributeBaseValues.BaseReflexSave + DexMod;
+    DerivedAttributes.WillSave = DerivedAttributeBaseValues.BaseWillSave + WisMod;
+    
+    SG_LOG(Verbose, TEXT("Recalculated derived attributes: %s"), *DerivedAttributes.ToString());
+}
+
+bool ASGCharacterBase::ApplyDamage(int32 Amount)
+{
+    if (Amount <= 0)
+    {
+        SG_LOG(Warning, TEXT("Attempted to apply non-positive damage: %d"), Amount);
+        return false;
+    }
+
+    const int32 OldHP = DerivedAttributes.HitPoints;
+    
+    // First reduce temporary hit points if any
+    if (DerivedAttributes.TemporaryHitPoints > 0)
+    {
+        const int32 DamageToTempHP = FMath::Min(DerivedAttributes.TemporaryHitPoints, Amount);
+        DerivedAttributes.TemporaryHitPoints -= DamageToTempHP;
+        Amount -= DamageToTempHP;
+        
+        if (Amount <= 0)
+        {
+            SG_LOG(Log, TEXT("Absorbed %d damage with temp HP, remaining temp HP: %d"), 
+                DamageToTempHP, DerivedAttributes.TemporaryHitPoints);
+            return false;
+        }
+    }
+    
+    // Apply remaining damage to actual HP
+    DerivedAttributes.HitPoints = FMath::Max(0, DerivedAttributes.HitPoints - Amount);
+    
+    SG_LOG(Log, TEXT("Took %d damage (was %d, now %d/%d)"), 
+        Amount, OldHP, DerivedAttributes.HitPoints, DerivedAttributes.MaxHitPoints);
+    
+    // Return true if character is now at or below 0 HP
+    return DerivedAttributes.HitPoints <= 0;
+}
+
+int32 ASGCharacterBase::ApplyHealing(int32 Amount)
+{
+    if (Amount <= 0)
+    {
+        SG_LOG(Warning, TEXT("Attempted to apply non-positive healing: %d"), Amount);
+        return 0;
+    }
+    
+    const int32 OldHP = DerivedAttributes.HitPoints;
+    const int32 NewHP = FMath::Min(DerivedAttributes.HitPoints + Amount, DerivedAttributes.MaxHitPoints);
+    const int32 ActualHealing = NewHP - OldHP;
+    
+    if (ActualHealing > 0)
+    {
+        DerivedAttributes.HitPoints = NewHP;
+        SG_LOG(Log, TEXT("Healed %d HP (was %d, now %d/%d)"), 
+            ActualHealing, OldHP, DerivedAttributes.HitPoints, DerivedAttributes.MaxHitPoints);
+    }
+    
+    return ActualHealing;
+}
+
+// ======================================================================
+// Debug & Development
+// ======================================================================
 
 void ASGCharacterBase::DebugLogState(bool bForce) const
 {
@@ -234,27 +301,45 @@ void ASGCharacterBase::DebugLogState(bool bForce) const
         return;
     }
     
-    FString DebugString = FString::Printf(TEXT("=== Character State: %s ===\n"), *GetName());
+    FString LogOutput = FString::Printf(TEXT("%s State:\n\n"), *GetName());
     
-    const TArray<TPair<FString, const FSGAttributeData*>> Attributes = {
-        {TEXT("STR"), &Strength},
-        {TEXT("DEX"), &Dexterity},
-        {TEXT("CON"), &Constitution},
-        {TEXT("INT"), &Intelligence},
-        {TEXT("WIS"), &Wisdom},
-        {TEXT("CHA"), &Charisma}
-    };
-    
-    for (const auto& Pair : Attributes)
+    // Log all attributes
+    LogOutput += TEXT("Base Attributes:\n");
+    for (const auto& Elem : Attributes)
     {
-        if (Pair.Value)
-        {
-            DebugString += FString::Printf(TEXT("%s: %2d (Mod: %+d)\n"), 
-                *Pair.Key, 
-                Pair.Value->BaseValue, 
-                Pair.Value->Modifier);
-        }
+        const FString AttrName = GetAttributeName(Elem.Key);
+        LogOutput += FString::Printf(TEXT("  %s: %2d (Mod: %+d)\n"), 
+            *AttrName, Elem.Value.BaseValue, Elem.Value.Modifier);
     }
     
-    UE_LOG(LogSGCharacter, Log, TEXT("\n%s"), *DebugString);
+    // Log derived attributes
+    LogOutput += TEXT("\nDerived Attributes:\n");
+    LogOutput += FString::Printf(TEXT("  %s\n"), *DerivedAttributes.ToString());
+    
+    // Log base values
+    LogOutput += TEXT("\nBase Values:\n");
+    LogOutput += FString::Printf(TEXT("  Base HP: %d\n"), DerivedAttributeBaseValues.BaseHitPoints);
+    LogOutput += FString::Printf(TEXT("  Saves (F/R/W): %d/%d/%d\n"), 
+        DerivedAttributeBaseValues.BaseFortitudeSave,
+        DerivedAttributeBaseValues.BaseReflexSave,
+        DerivedAttributeBaseValues.BaseWillSave);
+    LogOutput += FString::Printf(TEXT("  AC Bonuses: Armor=%d, Shield=%d, Natural=%d, Deflection=%d, Dodge=%d\n"),
+        DerivedAttributeBaseValues.ArmorBonus,
+        DerivedAttributeBaseValues.ShieldBonus,
+        DerivedAttributeBaseValues.NaturalArmor,
+        DerivedAttributeBaseValues.DeflectionBonus,
+        DerivedAttributeBaseValues.DodgeBonus);
+    
+    UE_LOG(LogSGCharacter, Log, TEXT("\n%s"), *LogOutput);
+}
+
+// ======================================================================
+// Protected Helpers
+// ======================================================================
+
+void ASGCharacterBase::OnAttributeChanged(ESGAttributeType AttributeType)
+{
+    // Base implementation does nothing, can be overridden by derived classes
+    // This is called after an attribute changes and derived attributes are recalculated
+    SG_LOG(Verbose, TEXT("Attribute changed: %s"), *GetAttributeName(AttributeType));
 }

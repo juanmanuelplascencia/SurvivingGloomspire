@@ -14,8 +14,10 @@ This document outlines the development of the core game systems for the Pathfind
 ### 1. Character System (First Priority)
 - [x] **Core Attributes**
   - [x] Implement base attribute system (STR, DEX, CON, INT, WIS, CHA)
-  - [ ] Create derived attributes (HP, AC, Saves)
+  - [x] Create derived attributes (HP, AC, Saves)
   - [x] Implement attribute modifiers and bonuses
+  - [x] Add damage and healing systems
+  - [x] Implement debug logging for attributes
 
 - [ ] **Character Progression**
   - [ ] Design class system structure
