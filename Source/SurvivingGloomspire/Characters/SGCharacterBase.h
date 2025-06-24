@@ -1,94 +1,128 @@
+// Copyright 2025 Surviving Gloomspire Team. All Rights Reserved.
+
 #pragma once
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include "SGAttributeTypes.h"
 #include "SGCharacterBase.generated.h"
 
-// Enum for core attributes
-UENUM(BlueprintType)
-enum class EAttributeType : uint8
-{
-    STR,  // Strength
-    DEX,  // Dexterity
-    CON,  // Constitution
-    INT,  // Intelligence
-    WIS,  // Wisdom
-    CHA   // Charisma
-};
+// Forward declarations
+class USGAttributeSetBase;
+class USGAbilitySystemComponent;
 
-// Structure to hold attribute data
-USTRUCT(BlueprintType)
-struct FAttributeData
-{
-    GENERATED_BODY()
-
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attributes")
-    int32 BaseValue;
-
-    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Attributes")
-    int32 Modifier;
-
-    FAttributeData() : BaseValue(10), Modifier(0) {}
-
-    // Calculate modifier based on attribute value (Pathfinder rules: (value - 10) / 2)
-    void CalculateModifier()
-    {
-        Modifier = FMath::FloorToInt((BaseValue - 10) / 2.0f);
-    }
-};
-
-UCLASS(Blueprintable)
+/**
+ * Base class for all characters in the game.
+ * Handles core character functionality including attributes, abilities, and common character features.
+ */
+UCLASS(Blueprintable, Abstract, meta = (DisplayName = "SG Character Base"))
 class SURVIVINGGLOOMSPIRE_API ASGCharacterBase : public ACharacter
 {
     GENERATED_BODY()
+    
+    // Enable/disable debug logging for this class
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Debug", meta = (AllowPrivateAccess = "true"))
+    bool bEnableDebugLogging = true;
 
 public:
-    // Sets default values for this character's properties
-    ASGCharacterBase();
+    /**
+     * Default constructor.
+     * Initializes default values for this character's properties.
+     */
+    ASGCharacterBase(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
 
 protected:
-    // Called when the game starts or when spawned
+    /**
+     * Called when the game starts or when spawned.
+     * Use this for any initialization that needs to happen after the character is fully constructed.
+     */
     virtual void BeginPlay() override;
+    
+    /**
+     * Outputs debug information about the character's current state.
+     * @param bForce - If true, will log even if debug logging is disabled
+     */
+    UFUNCTION(BlueprintCallable, Category = "Debug")
+    virtual void DebugLogState(bool bForce = false) const;
 
     // Core Attributes
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attributes")
-    FAttributeData Strength;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attributes", meta = (DisplayName = "Strength"))
+    FSGAttributeData Strength;
 
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attributes")
-    FAttributeData Dexterity;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attributes", meta = (DisplayName = "Dexterity"))
+    FSGAttributeData Dexterity;
 
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attributes")
-    FAttributeData Constitution;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attributes", meta = (DisplayName = "Constitution"))
+    FSGAttributeData Constitution;
 
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attributes")
-    FAttributeData Intelligence;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attributes", meta = (DisplayName = "Intelligence"))
+    FSGAttributeData Intelligence;
 
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attributes")
-    FAttributeData Wisdom;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attributes", meta = (DisplayName = "Wisdom"))
+    FSGAttributeData Wisdom;
 
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attributes")
-    FAttributeData Charisma;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attributes", meta = (DisplayName = "Charisma"))
+    FSGAttributeData Charisma;
 
 public:
-    // Called every frame
+    //~ Begin AActor Interface
+    /**
+     * Called every frame.
+     * @param DeltaTime - The time since the last tick in seconds
+     */
     virtual void Tick(float DeltaTime) override;
 
-    // Called to bind functionality to input
+    /**
+     * Called to bind functionality to input.
+     * @param PlayerInputComponent - The input component to bind to
+     */
     virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+    //~ End AActor Interface
 
-    // Get attribute by type
+    /**
+     * Gets the attribute data for the specified attribute type.
+     * @param AttributeType - The type of attribute to retrieve
+     * @return The attribute data structure
+     */
     UFUNCTION(BlueprintCallable, Category = "Attributes")
-    FAttributeData GetAttribute(EAttributeType AttributeType) const;
+    FSGAttributeData GetAttribute(ESGAttributeType AttributeType) const;
 
-    // Set base attribute value
+    /**
+     * Sets the base value of the specified attribute and recalculates its modifier.
+     * @param AttributeType - The type of attribute to modify
+     * @param NewValue - The new base value (will be clamped between 1-30)
+     */
     UFUNCTION(BlueprintCallable, Category = "Attributes")
-    void SetBaseAttribute(EAttributeType AttributeType, int32 NewValue);
+    void SetBaseAttribute(ESGAttributeType AttributeType, int32 NewValue);
 
-    // Calculate all attribute modifiers
+    /**
+     * Recalculates all attribute modifiers.
+     * Call this after making multiple attribute changes for better performance.
+     */
     UFUNCTION(BlueprintCallable, Category = "Attributes")
     void CalculateAllModifiers();
 
-    // Get attribute modifier
+    /**
+     * Gets the modifier for the specified attribute.
+     * @param AttributeType - The type of attribute
+     * @return The calculated modifier value
+     */
     UFUNCTION(BlueprintCallable, Category = "Attributes")
-    int32 GetAttributeModifier(EAttributeType AttributeType) const;
+    int32 GetAttributeModifier(ESGAttributeType AttributeType) const;
+    
+    /**
+     * Gets the current value of an attribute.
+     * @param AttributeType - The type of attribute
+     * @return The current base value
+     */
+    UFUNCTION(BlueprintPure, Category = "Attributes")
+    int32 GetAttributeValue(ESGAttributeType AttributeType) const;
+    
+    /**
+     * Helper function to get attribute display name as string.
+     * @param AttributeType - The type of attribute
+     * @return Display name as FString
+     */
+    UFUNCTION(BlueprintPure, Category = "Attributes")
+    static FString GetAttributeName(ESGAttributeType AttributeType);
 };
