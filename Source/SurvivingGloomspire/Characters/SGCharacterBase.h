@@ -10,6 +10,7 @@
 #include "SGArmorClass.h"
 #include "SGSavingThrows.h"
 #include "SGClassComponent.h"
+#include "SGSkillComponent.h"
 #include "SGCharacterBase.generated.h"
 
 // Forward declarations
@@ -156,6 +157,17 @@ public:
     USGClassComponent* GetClassComponent() const { return ClassComponent; }
     
     // ======================================================================
+    // Skills - Public Interface
+    // ======================================================================
+    
+    /**
+     * Gets the character's skill component
+     * @return The skill component that handles skill ranks and checks
+     */
+    UFUNCTION(BlueprintCallable, Category = "Character|Skills")
+    USGSkillComponent* GetSkillComponent() const { return SkillComponent; }
+    
+    // ======================================================================
     // Debug & Development - Public Interface
     // ======================================================================
     
@@ -209,6 +221,10 @@ private:
     /** Handles character class progression, levels, and experience */
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = "true"))
     TObjectPtr<USGClassComponent> ClassComponent;
+    
+    /** Handles character skills and skill checks */
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = "true"))
+    TObjectPtr<USGSkillComponent> SkillComponent;
     
     // ======================================================================
     // Private Properties

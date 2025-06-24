@@ -7,6 +7,7 @@
 #include "SGArmorClass.h"
 #include "SGSavingThrows.h"
 #include "SGClassType.h"
+#include "SGSkillComponent.h"
 
 // Define the log category for this class
 DEFINE_LOG_CATEGORY_STATIC(LogSGCharacter, Log, All);
@@ -30,6 +31,9 @@ ASGCharacterBase::ASGCharacterBase(const FObjectInitializer& ObjectInitializer)
     // Create and initialize the class component
     ClassComponent = CreateDefaultSubobject<USGClassComponent>(TEXT("ClassComponent"));
     
+    // Create and initialize the skill component
+    SkillComponent = CreateDefaultSubobject<USGSkillComponent>(TEXT("SkillComponent"));
+    
     // Initialize default attribute values
     InitializeDefaultAttributes();
     
@@ -40,6 +44,12 @@ ASGCharacterBase::ASGCharacterBase(const FObjectInitializer& ObjectInitializer)
 void ASGCharacterBase::BeginPlay()
 {
     Super::BeginPlay();
+    
+    // Initialize the skill component with this character
+    if (SkillComponent)
+    {
+        SkillComponent->Initialize(this);
+    }
     
     // Log initial state
     DebugLogState(true);
@@ -300,6 +310,35 @@ void ASGCharacterBase::DebugLogState(bool bForce) const
         HitPoints.Current,
         HitPoints.Max,
         HitPoints.Temporary);
+        
+    // Log skills if we have a skill component
+    if (SkillComponent)
+    {
+        DebugString += TEXT("\nSkills:\n");
+        const TMap<ESGSkillType, FSGSkillData>& AllSkills = SkillComponent->GetAllSkills();
+        
+        for (const auto& Elem : AllSkills)
+        {
+            const ESGSkillType SkillType = Elem.Key;
+            const FSGSkillData& SkillData = Elem.Value;
+            
+            if (SkillData.Ranks > 0 || SkillData.ClassSkill)
+            {
+                const int32 TotalBonus = SkillComponent->GetSkillBonus(SkillType);
+                const FString SkillName = USGSkillComponent::GetSkillDisplayName(SkillType);
+                const ESGAttributeType KeyAbility = USGSkillComponent::GetKeyAbilityForSkill(SkillType);
+                const FString AbilityName = GetAttributeName(KeyAbility);
+                
+                DebugString += FString::Printf(TEXT("  %s: %+d (%s %+d + %d ranks%s)\n"),
+                    *SkillName,
+                    TotalBonus,
+                    *AbilityName,
+                    GetAttributeModifier(KeyAbility),
+                    SkillData.Ranks,
+                    SkillData.ClassSkill ? TEXT(" + 3 class") : TEXT(""));
+            }
+        }
+    }
         
     // Calculate AC values for display
     const int32 DexMod = GetAttributeModifier(ESGAttributeType::DEX);

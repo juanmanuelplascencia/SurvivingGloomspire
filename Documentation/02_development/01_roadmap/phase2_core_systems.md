@@ -29,10 +29,18 @@ This document outlines the development of the core game systems for the Pathfind
   - [x] Integrate with character base class
   - [x] Add debug visualization for class and level info
 
-- [ ] **Skills & Abilities**
-  - [ ] Implement skill system
-  - [ ] Create skill checks and DCs
+- [x] **Skills & Abilities** (In Progress)
+  - [x] Implement core skill system
+    - [x] Create skill types and enums
+    - [x] Implement skill data structures
+    - [x] Create skill component for character skills
+    - [x] Add skill debug visualization
+  - [x] Implement skill checks and DCs
+    - [x] Add skill check functionality
+    - [x] Implement DC calculations
+    - [x] Add support for class skills
   - [ ] Design feat system framework
+  - [ ] Implement feat prerequisites and benefits
 
 ### 2. Combat System (Second Priority)
 - [ ] **Core Combat Loop**
