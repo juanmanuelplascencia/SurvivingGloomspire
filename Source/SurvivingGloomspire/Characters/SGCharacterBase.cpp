@@ -1,8 +1,11 @@
 // Copyright 2025 Surviving Gloomspire Team. All Rights Reserved.
 
 #include "SGCharacterBase.h"
-#include "SGAttributeTypes.h"
-#include "SGDerivedAttributesTypes.h"
+#include "SGAttributeType.h"
+#include "SGAttributeData.h"
+#include "SGHitPoints.h"
+#include "SGArmorClass.h"
+#include "SGSavingThrows.h"
 
 // Define the log category for this class
 DEFINE_LOG_CATEGORY_STATIC(LogSGCharacter, Log, All);
@@ -61,15 +64,22 @@ void ASGCharacterBase::InitializeDefaultAttributes()
     Attributes.Add(ESGAttributeType::WIS, FSGAttributeData());
     Attributes.Add(ESGAttributeType::CHA, FSGAttributeData());
     
-    // Initialize derived attributes with default values
-    DerivedAttributes = FSGDerivedAttributes();
+    // Initialize hit points
+    HitPoints = FSGHitPoints();
+    HitPoints.Max = 10; // Base HP for level 1 character
+    HitPoints.Current = 10;
     
-    // Set default derived attribute base values
-    DerivedAttributeBaseValues = FSDerivedAttributeBaseValues();
-    DerivedAttributeBaseValues.BaseHitPoints = 10; // Base HP for level 1 character
-    DerivedAttributeBaseValues.BaseFortitudeSave = 2;
-    DerivedAttributeBaseValues.BaseReflexSave = 0;
-    DerivedAttributeBaseValues.BaseWillSave = 2;
+    // Initialize armor class
+    ArmorClass = FSGArmorClass();
+    
+    // Initialize saving throws
+    SavingThrows = FSGSavingThrows();
+    SavingThrows.Fortitude.BaseSave = 2;
+    SavingThrows.Reflex.BaseSave = 0;
+    SavingThrows.Will.BaseSave = 2;
+    
+    // Set base hit points
+    BaseHitPoints = 10;
     
     SG_LOG(Log, TEXT("Initialized default attributes"));
 }
@@ -182,55 +192,20 @@ FString ASGCharacterBase::GetAttributeName(ESGAttributeType AttributeType)
 
 void ASGCharacterBase::CalculateDerivedAttributes()
 {
-    if (!Attributes.Contains(ESGAttributeType::CON) || !Attributes.Contains(ESGAttributeType::DEX))
+    if (!Attributes.Contains(ESGAttributeType::CON) || !Attributes.Contains(ESGAttributeType::DEX) || !Attributes.Contains(ESGAttributeType::WIS))
     {
         SG_LOG(Error, TEXT("Missing required attributes for calculating derived attributes"));
         return;
     }
 
     const int32 ConMod = GetAttributeModifier(ESGAttributeType::CON);
-    const int32 DexMod = GetAttributeModifier(ESGAttributeType::DEX);
-    const int32 WisMod = GetAttributeModifier(ESGAttributeType::WIS);
-
-    // Calculate Max HP (Base + CON mod * level, minimum 1 per level)
-    const int32 MaxHP = FMath::Max(1, DerivedAttributeBaseValues.BaseHitPoints + ConMod);
+    // Update hit points
+    const int32 NewMaxHP = FMath::Max(1, BaseHitPoints + ConMod);
+    HitPoints.Max = NewMaxHP;
+    HitPoints.Current = FMath::Min(HitPoints.Current, NewMaxHP);
     
-    // Calculate AC (10 + armor + shield + DEX mod + size + natural + deflection + dodge + misc)
-    const int32 AC = 10 + 
-                     DerivedAttributeBaseValues.ArmorBonus + 
-                     DerivedAttributeBaseValues.ShieldBonus + 
-                     DexMod + 
-                     DerivedAttributeBaseValues.NaturalArmor + 
-                     DerivedAttributeBaseValues.DeflectionBonus + 
-                     DerivedAttributeBaseValues.DodgeBonus;
-
-    // Update derived attributes
-    DerivedAttributes.MaxHitPoints = FMath::Max(1, MaxHP);
-    
-    // Only auto-fill HP if it hasn't been set yet or is invalid
-    if (DerivedAttributes.HitPoints <= 0 || DerivedAttributes.HitPoints > DerivedAttributes.MaxHitPoints)
-    {
-        DerivedAttributes.HitPoints = DerivedAttributes.MaxHitPoints;
-    }
-    
-    // Calculate different AC types
-    DerivedAttributes.ArmorClass = FMath::Max(10, AC);
-    
-    // Touch AC is AC without armor, shield, and natural armor bonuses
-    DerivedAttributes.TouchArmorClass = FMath::Max(10, 
-        10 + DexMod + DerivedAttributeBaseValues.DeflectionBonus + DerivedAttributeBaseValues.DodgeBonus);
-        
-    // Flat-footed AC is AC without DEX and dodge bonuses
-    DerivedAttributes.FlatFootedArmorClass = FMath::Max(10, 
-        10 + DerivedAttributeBaseValues.ArmorBonus + DerivedAttributeBaseValues.ShieldBonus + 
-        DerivedAttributeBaseValues.NaturalArmor + DerivedAttributeBaseValues.DeflectionBonus);
-
-    // Calculate saving throws
-    DerivedAttributes.FortitudeSave = DerivedAttributeBaseValues.BaseFortitudeSave + ConMod;
-    DerivedAttributes.ReflexSave = DerivedAttributeBaseValues.BaseReflexSave + DexMod;
-    DerivedAttributes.WillSave = DerivedAttributeBaseValues.BaseWillSave + WisMod;
-    
-    SG_LOG(Verbose, TEXT("Recalculated derived attributes: %s"), *DerivedAttributes.ToString());
+    SG_LOG(Verbose, TEXT("Recalculated derived attributes"));
+    DebugLogState();
 }
 
 bool ASGCharacterBase::ApplyDamage(int32 Amount)
@@ -241,51 +216,32 @@ bool ASGCharacterBase::ApplyDamage(int32 Amount)
         return false;
     }
 
-    const int32 OldHP = DerivedAttributes.HitPoints;
+    const int32 OldHP = HitPoints.Current;
+    const int32 DamageTaken = HitPoints.ApplyDamage(Amount);
+    const bool bIsDefeated = (HitPoints.Current <= 0);
     
-    // First reduce temporary hit points if any
-    if (DerivedAttributes.TemporaryHitPoints > 0)
+    SG_LOG(Log, TEXT("Took %d damage (HP: %d -> %d)"), DamageTaken, OldHP, HitPoints.Current);
+    
+    // Check if character is dead
+    if (bIsDefeated)
     {
-        const int32 DamageToTempHP = FMath::Min(DerivedAttributes.TemporaryHitPoints, Amount);
-        DerivedAttributes.TemporaryHitPoints -= DamageToTempHP;
-        Amount -= DamageToTempHP;
-        
-        if (Amount <= 0)
-        {
-            SG_LOG(Log, TEXT("Absorbed %d damage with temp HP, remaining temp HP: %d"), 
-                DamageToTempHP, DerivedAttributes.TemporaryHitPoints);
-            return false;
-        }
+        SG_LOG(Log, TEXT("Character has been defeated!"));
     }
     
-    // Apply remaining damage to actual HP
-    DerivedAttributes.HitPoints = FMath::Max(0, DerivedAttributes.HitPoints - Amount);
-    
-    SG_LOG(Log, TEXT("Took %d damage (was %d, now %d/%d)"), 
-        Amount, OldHP, DerivedAttributes.HitPoints, DerivedAttributes.MaxHitPoints);
-    
-    // Return true if character is now at or below 0 HP
-    return DerivedAttributes.HitPoints <= 0;
+    return bIsDefeated;
 }
 
 int32 ASGCharacterBase::ApplyHealing(int32 Amount)
 {
-    if (Amount <= 0)
+    if (Amount <= 0 || HitPoints.Current >= HitPoints.Max)
     {
-        SG_LOG(Warning, TEXT("Attempted to apply non-positive healing: %d"), Amount);
-        return 0;
+        return 0; // No healing to apply or already at max HP
     }
     
-    const int32 OldHP = DerivedAttributes.HitPoints;
-    const int32 NewHP = FMath::Min(DerivedAttributes.HitPoints + Amount, DerivedAttributes.MaxHitPoints);
-    const int32 ActualHealing = NewHP - OldHP;
+    const int32 OldHP = HitPoints.Current;
+    const int32 ActualHealing = HitPoints.Heal(Amount);
     
-    if (ActualHealing > 0)
-    {
-        DerivedAttributes.HitPoints = NewHP;
-        SG_LOG(Log, TEXT("Healed %d HP (was %d, now %d/%d)"), 
-            ActualHealing, OldHP, DerivedAttributes.HitPoints, DerivedAttributes.MaxHitPoints);
-    }
+    SG_LOG(Log, TEXT("Healed for %d (HP: %d -> %d)"), ActualHealing, OldHP, HitPoints.Current);
     
     return ActualHealing;
 }
@@ -301,36 +257,45 @@ void ASGCharacterBase::DebugLogState(bool bForce) const
         return;
     }
     
-    FString LogOutput = FString::Printf(TEXT("%s State:\n\n"), *GetName());
+    FString DebugString = TEXT("\n=== Character State ===\n");
     
-    // Log all attributes
-    LogOutput += TEXT("Base Attributes:\n");
+    // Log base attributes
+    DebugString += TEXT("Base Attributes:\n");
     for (const auto& Elem : Attributes)
     {
-        const FString AttrName = GetAttributeName(Elem.Key);
-        LogOutput += FString::Printf(TEXT("  %s: %2d (Mod: %+d)\n"), 
+        const FString AttrName = GetAttributeName(static_cast<ESGAttributeType>(Elem.Key));
+        DebugString += FString::Printf(TEXT("  %s: %d (Mod: %+d)\n"), 
             *AttrName, Elem.Value.BaseValue, Elem.Value.Modifier);
     }
     
     // Log derived attributes
-    LogOutput += TEXT("\nDerived Attributes:\n");
-    LogOutput += FString::Printf(TEXT("  %s\n"), *DerivedAttributes.ToString());
+    DebugString += TEXT("\nDerived Attributes:\n");
+    DebugString += FString::Printf(TEXT("  HP: %d/%d (Temp: %d)\n"), 
+        HitPoints.Current, 
+        HitPoints.Max,
+        HitPoints.Temporary);
+        
+    // Calculate AC values for display
+    const int32 DexMod = GetAttributeModifier(ESGAttributeType::DEX);
+    const int32 TotalAC = ArmorClass.CalculateTotalAC(DexMod);
+    const int32 TouchAC = ArmorClass.CalculateTouchAC(DexMod);
+    const int32 FlatFootedAC = ArmorClass.CalculateFlatFootedAC();
     
-    // Log base values
-    LogOutput += TEXT("\nBase Values:\n");
-    LogOutput += FString::Printf(TEXT("  Base HP: %d\n"), DerivedAttributeBaseValues.BaseHitPoints);
-    LogOutput += FString::Printf(TEXT("  Saves (F/R/W): %d/%d/%d\n"), 
-        DerivedAttributeBaseValues.BaseFortitudeSave,
-        DerivedAttributeBaseValues.BaseReflexSave,
-        DerivedAttributeBaseValues.BaseWillSave);
-    LogOutput += FString::Printf(TEXT("  AC Bonuses: Armor=%d, Shield=%d, Natural=%d, Deflection=%d, Dodge=%d\n"),
-        DerivedAttributeBaseValues.ArmorBonus,
-        DerivedAttributeBaseValues.ShieldBonus,
-        DerivedAttributeBaseValues.NaturalArmor,
-        DerivedAttributeBaseValues.DeflectionBonus,
-        DerivedAttributeBaseValues.DodgeBonus);
+    DebugString += FString::Printf(TEXT("  AC: %d (Touch: %d, FF: %d)\n"), 
+        TotalAC,
+        TouchAC,
+        FlatFootedAC);
+        
+    // Calculate saving throws for display
+    const int32 ConMod = GetAttributeModifier(ESGAttributeType::CON);
+    const int32 WisMod = GetAttributeModifier(ESGAttributeType::WIS);
     
-    UE_LOG(LogSGCharacter, Log, TEXT("\n%s"), *LogOutput);
+    DebugString += FString::Printf(TEXT("  Saves - Fort: %+d, Ref: %+d, Will: %+d\n"),
+        SavingThrows.Fortitude.CalculateTotal(ConMod),
+        SavingThrows.Reflex.CalculateTotal(DexMod),
+        SavingThrows.Will.CalculateTotal(WisMod));
+    
+    UE_LOG(LogSGCharacter, Log, TEXT("%s"), *DebugString);
 }
 
 // ======================================================================

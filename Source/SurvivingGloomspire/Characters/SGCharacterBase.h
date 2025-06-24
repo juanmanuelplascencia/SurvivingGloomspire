@@ -4,8 +4,11 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
-#include "SGAttributeTypes.h"
-#include "SGDerivedAttributesTypes.h"
+#include "SGAttributeType.h"
+#include "SGAttributeData.h"
+#include "SGHitPoints.h"
+#include "SGArmorClass.h"
+#include "SGSavingThrows.h"
 #include "SGCharacterBase.generated.h"
 
 // Forward declarations
@@ -79,18 +82,32 @@ public:
     int32 GetAttributeValue(ESGAttributeType AttributeType) const;
     
     /**
-     * Gets the current derived attributes
-     * @return Current derived attributes structure
+     * Gets the character's hit points
+     * @return Reference to the hit points structure
      */
     UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Character|Attributes")
-    FSGDerivedAttributes GetDerivedAttributes() const { return DerivedAttributes; }
+    const FSGHitPoints& GetHitPoints() const { return HitPoints; }
+    
+    /**
+     * Gets the character's armor class
+     * @return Reference to the armor class structure
+     */
+    UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Character|Attributes")
+    const FSGArmorClass& GetArmorClass() const { return ArmorClass; }
+    
+    /**
+     * Gets the character's saving throws
+     * @return Reference to the saving throws structure
+     */
+    UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Character|Attributes")
+    const FSGSavingThrows& GetSavingThrows() const { return SavingThrows; }
     
     /**
      * Gets the base values used for derived attribute calculations
-     * @return Reference to the base values structure
+     * @return Base hit points from class and level
      */
     UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Character|Attributes")
-    FSDerivedAttributeBaseValues GetDerivedAttributeBaseValues() const { return DerivedAttributeBaseValues; }
+    int32 GetBaseHitPoints() const { return BaseHitPoints; }
 
     /**
      * Helper function to get attribute display name as string.
@@ -146,13 +163,21 @@ protected:
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Character|Attributes")
     TMap<ESGAttributeType, FSGAttributeData> Attributes;
 
-    /** Derived character attributes (HP, AC, Saves) */
+    /** Character's hit points */
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Character|Attributes")
-    FSGDerivedAttributes DerivedAttributes;
+    FSGHitPoints HitPoints;
     
-    /** Base values used for derived attribute calculations */
+    /** Character's armor class */
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Character|Attributes")
+    FSGArmorClass ArmorClass;
+    
+    /** Character's saving throws */
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Character|Attributes")
+    FSGSavingThrows SavingThrows;
+    
+    /** Base hit points from class and level */
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character|Attributes")
-    FSDerivedAttributeBaseValues DerivedAttributeBaseValues;
+    int32 BaseHitPoints = 10;
 
     // ======================================================================
     // Protected Methods

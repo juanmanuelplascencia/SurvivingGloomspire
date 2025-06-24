@@ -12,6 +12,14 @@ public class SurvivingGloomspire : ModuleRules
         IWYUSupport = IWYUSupport.Full;  // Enforce Include What You Use
         bLegacyPublicIncludePaths = false; // Use explicit public include paths
         
+        // Add public include paths
+        PublicIncludePaths.AddRange(
+        [
+            Path.Combine(ModuleDirectory, "Characters"),
+            Path.Combine(ModuleDirectory, "Characters/Attributes"),
+            Path.Combine(ModuleDirectory, "Characters/Classes")
+        ]);
+        
         
         // Public dependencies (modules that expose their header files to us)
         PublicDependencyModuleNames.AddRange(
@@ -93,10 +101,6 @@ public class SurvivingGloomspire : ModuleRules
         #else
         bEnableUndefinedIdentifierWarnings = false;
         #endif
-        
-        // Add include paths for module subdirectories
-        PublicIncludePaths.Add(Path.Combine(ModuleDirectory, "Characters"));
-        PublicIncludePaths.Add(Path.Combine(ModuleDirectory, "Types"));
         
         // Add source files for the logging system
         PrivateIncludePathModuleNames.AddRange(
